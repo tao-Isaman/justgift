@@ -38,15 +38,15 @@ import { submitDonation } from "@/lib/actions/donate";
 import { THAI_BANKS } from "@/lib/constants";
 
 const formSchema = z.object({
-  donorName: z.string().trim().min(1, "Enter a name").max(40),
-  message: z.string().trim().max(200, "Keep it under 200 characters").optional(),
+  donorName: z.string().trim().min(1, "กรอกชื่อ").max(40),
+  message: z.string().trim().max(200, "ไม่เกิน 200 ตัวอักษร").optional(),
   amount: z
     .string()
-    .min(1, "Enter an amount")
+    .min(1, "กรอกจำนวนเงิน")
     .refine((v) => {
       const n = Number(v);
       return Number.isFinite(n) && n > 0 && n <= 1_000_000;
-    }, "Enter a valid amount"),
+    }, "กรอกจำนวนเงินให้ถูกต้อง"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -88,14 +88,14 @@ export function DonateForm({
 
   function onSubmit(values: FormValues) {
     if (!file) {
-      toast.error("Please attach your transfer slip");
+      toast.error("กรุณาแนบสลิปโอนเงิน");
       return;
     }
     startTransition(async () => {
       const payload = await decodeSlipQr(file);
       if (!payload) {
         toast.error(
-          "We couldn't read the QR on that slip. Try a clearer, uncropped image."
+          "อ่าน QR บนสลิปไม่ได้ ลองใช้รูปที่ชัดและไม่ถูกครอป"
         );
         return;
       }
@@ -146,10 +146,10 @@ export function DonateForm({
             <CheckCircle2 className="size-7" />
           </span>
           <div>
-            <h2 className="font-heading text-xl font-bold">Thank you! 🎉</h2>
+            <h2 className="font-heading text-xl font-bold">ขอบคุณ! 🎉</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Your donation was verified and is now live on {displayName}&apos;s
-              stream.
+              โดเนทของคุณได้รับการยืนยันแล้ว และกำลังแสดงบนสตรีมของ{" "}
+              {displayName}
             </p>
           </div>
           <div className="w-full pt-2">
@@ -161,7 +161,7 @@ export function DonateForm({
             />
           </div>
           <Button variant="outline" onClick={() => setSuccess(null)}>
-            Send another donation
+            โดเนทอีกครั้ง
           </Button>
         </CardContent>
       </Card>
@@ -171,18 +171,18 @@ export function DonateForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Send a donation</CardTitle>
+        <CardTitle>ส่งโดเนท</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Payment details */}
         <div className="mb-6 space-y-2 rounded-lg border border-border/60 bg-muted/30 p-4">
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            1 · Transfer to
+            1 · โอนเงินไปที่
           </p>
           {promptpayId ? (
             <PayRow
               icon={<Smartphone className="size-4" />}
-              label="PromptPay"
+              label="พร้อมเพย์"
               value={promptpayId}
             />
           ) : null}
@@ -195,7 +195,7 @@ export function DonateForm({
           ) : null}
           {!promptpayId && !bankAccount ? (
             <p className="text-sm text-muted-foreground">
-              This streamer hasn&apos;t added payment details yet.
+              สตรีมเมอร์ยังไม่ได้เพิ่มช่องทางรับเงิน
             </p>
           ) : null}
         </div>
@@ -203,7 +203,7 @@ export function DonateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              2 · Your alert
+              2 · ข้อมูลแจ้งเตือน
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
@@ -211,9 +211,9 @@ export function DonateForm({
                 name="donorName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your name</FormLabel>
+                    <FormLabel>ชื่อของคุณ</FormLabel>
                     <FormControl>
-                      <Input placeholder="Shown on stream" {...field} />
+                      <Input placeholder="แสดงบนสตรีม" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -224,7 +224,7 @@ export function DonateForm({
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount (฿)</FormLabel>
+                    <FormLabel>จำนวนเงิน (฿)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -245,11 +245,11 @@ export function DonateForm({
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message (optional)</FormLabel>
+                  <FormLabel>ข้อความ (ไม่บังคับ)</FormLabel>
                   <FormControl>
                     <Textarea
                       rows={3}
-                      placeholder="Say something nice…"
+                      placeholder="ฝากข้อความถึงสตรีมเมอร์…"
                       {...field}
                     />
                   </FormControl>
@@ -259,7 +259,7 @@ export function DonateForm({
             />
 
             <p className="pt-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              3 · Upload your slip
+              3 · อัปโหลดสลิป
             </p>
             <input
               ref={fileInputRef}
@@ -273,21 +273,19 @@ export function DonateForm({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={previewUrl}
-                  alt="Slip preview"
+                  alt="ตัวอย่างสลิป"
                   className="size-16 rounded-md object-cover"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{file?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Ready to verify
-                  </p>
+                  <p className="text-xs text-muted-foreground">พร้อมตรวจสอบ</p>
                 </div>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
                   onClick={() => pickFile(null)}
-                  aria-label="Remove slip"
+                  aria-label="ลบสลิป"
                 >
                   <X className="size-4" />
                 </Button>
@@ -300,10 +298,10 @@ export function DonateForm({
               >
                 <ImageUp className="size-6 text-muted-foreground" />
                 <span className="text-sm font-medium">
-                  Tap to upload your transfer slip
+                  แตะเพื่ออัปโหลดสลิปโอนเงิน
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  PNG, JPG or WEBP with the QR visible
+                  PNG, JPG หรือ WEBP ที่เห็น QR ชัดเจน
                 </span>
               </button>
             )}
@@ -315,7 +313,7 @@ export function DonateForm({
               disabled={pending}
             >
               {pending && <Loader2 className="size-4 animate-spin" />}
-              {pending ? "Verifying slip…" : "Verify & send alert"}
+              {pending ? "กำลังตรวจสลิป…" : "ตรวจสลิปแล้วส่งแจ้งเตือน"}
             </Button>
           </form>
         </Form>

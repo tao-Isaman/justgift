@@ -33,16 +33,16 @@ export function OverlayCard({
     startTransition(async () => {
       const res = await sendTestAlert();
       if (res?.error) toast.error(res.error);
-      else toast.success("Test alert sent to your overlay");
+      else toast.success("ส่งการแจ้งเตือนทดสอบไปที่ overlay แล้ว");
     });
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your OBS overlay</CardTitle>
+        <CardTitle>Overlay สำหรับ OBS</CardTitle>
         <CardDescription>
-          Add this URL as a Browser Source in OBS (1920×1080, transparent).
+          เพิ่ม URL นี้เป็น Browser Source ใน OBS (1920×1080 พื้นหลังโปร่งใส)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -67,7 +67,7 @@ export function OverlayCard({
             ) : (
               <Play className="size-4" />
             )}
-            Send test alert
+            ทดสอบการแจ้งเตือน
           </Button>
           <a
             href={overlayUrl}
@@ -75,14 +75,14 @@ export function OverlayCard({
             rel="noreferrer"
             className={cn(buttonVariants({ variant: "ghost" }))}
           >
-            Open overlay <ExternalLink className="size-4" />
+            เปิด overlay <ExternalLink className="size-4" />
           </a>
         </div>
 
         <Separator className="my-1" />
 
         <div>
-          <p className="text-sm font-medium">Your donation page</p>
+          <p className="text-sm font-medium">เพจรับโดเนทของคุณ</p>
           <div className="mt-2 flex items-center gap-2">
             <input
               readOnly
@@ -95,7 +95,7 @@ export function OverlayCard({
               href={pageUrl}
               target="_blank"
               className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              aria-label="Open donation page"
+              aria-label="เปิดเพจรับโดเนท"
             >
               <ExternalLink className="size-4" />
             </Link>

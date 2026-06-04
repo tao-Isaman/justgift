@@ -36,23 +36,24 @@ export type InquiryResult =
   | { ok: false; code?: number; message: string };
 
 function messageForCode(code?: number, fallback?: string): string {
-  if (code === 1007) return "Slip verification quota exceeded. Please try again later.";
-  if (code === 1008) return "Slip verification subscription has expired.";
-  if (code === 1003) return "Slip verification isn't allowed from this server.";
+  if (code === 1007)
+    return "โควต้าการตรวจสลิปเต็มแล้ว กรุณาลองใหม่ภายหลัง";
+  if (code === 1008) return "แพ็กเกจการตรวจสลิปหมดอายุแล้ว";
+  if (code === 1003) return "ไม่อนุญาตให้ตรวจสลิปจากเซิร์ฟเวอร์นี้";
   if (code !== undefined && code >= 1000 && code <= 1002)
-    return "Slip verification isn't configured correctly.";
+    return "การตั้งค่าการตรวจสลิปไม่ถูกต้อง";
   if (code !== undefined && code >= 1004 && code <= 1006)
-    return "We couldn't read this slip. Please upload the original transfer slip image.";
+    return "อ่านสลิปนี้ไม่ได้ กรุณาอัปโหลดรูปสลิปโอนเงินต้นฉบับ";
   if (code !== undefined && code >= 2000 && code <= 2999)
-    return "The bank couldn't verify this slip right now. Please try again.";
-  return fallback ?? "This slip could not be verified.";
+    return "ธนาคารไม่สามารถตรวจสลิปได้ในขณะนี้ กรุณาลองใหม่";
+  return fallback ?? "ตรวจสอบสลิปนี้ไม่ได้";
 }
 
 export async function inquireSlip(payload: string): Promise<InquiryResult> {
   const id = process.env.RDCW_CLIENT_ID;
   const secret = process.env.RDCW_CLIENT_SECRET;
   if (!id || !secret) {
-    return { ok: false, message: "Slip verification isn't configured yet." };
+    return { ok: false, message: "ยังไม่ได้ตั้งค่าการตรวจสลิป" };
   }
 
   const auth = Buffer.from(`${id}:${secret}`).toString("base64");
@@ -71,7 +72,7 @@ export async function inquireSlip(payload: string): Promise<InquiryResult> {
   } catch {
     return {
       ok: false,
-      message: "Couldn't reach the verification service. Please try again.",
+      message: "เชื่อมต่อบริการตรวจสลิปไม่ได้ กรุณาลองใหม่",
     };
   }
 
@@ -92,7 +93,10 @@ export async function inquireSlip(payload: string): Promise<InquiryResult> {
   }
 
   if (obj.valid !== true || typeof obj.data !== "object" || obj.data === null) {
-    return { ok: false, message: "This slip could not be verified as a real payment." };
+    return {
+      ok: false,
+      message: "ตรวจสอบสลิปนี้ว่าเป็นการชำระเงินจริงไม่ได้",
+    };
   }
 
   return { ok: true, data: obj.data as RdcwData, raw: body };

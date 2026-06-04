@@ -5,6 +5,7 @@ import {
   Bell,
   Check,
   Palette,
+  Plus,
   Radio,
   ScanLine,
   ShieldCheck,
@@ -18,62 +19,97 @@ import { AlertCard } from "@/components/alert-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { PLANS } from "@/lib/constants";
+import { FAQ, PLANS, SITE } from "@/lib/constants";
 
 const STEPS = [
   {
     icon: Upload,
-    title: "Donor pays & uploads slip",
-    body: "Your fan transfers to your account from any Thai bank or wallet, then drops the transfer slip on your page.",
+    title: "ผู้ชมโอนเงินแล้วอัปโหลดสลิป",
+    body: "แฟน ๆ โอนเข้าบัญชีคุณผ่านพร้อมเพย์หรือธนาคารใดก็ได้ แล้วอัปโหลดสลิปบนเพจรับโดเนทของคุณ",
   },
   {
     icon: ScanLine,
-    title: "We verify the slip",
-    body: "JustGift checks the slip against the bank via slip.rdcw.co.th — real payment, right account, right amount, used once.",
+    title: "ระบบตรวจสลิปให้อัตโนมัติ",
+    body: "JustGift ตรวจสลิปกับธนาคารผ่าน slip.rdcw.co.th ว่าจ่ายจริง ถูกบัญชี ยอดตรง และใช้ได้ครั้งเดียว",
   },
   {
     icon: Bell,
-    title: "Alert fires on stream",
-    body: "The instant it's verified, an alert animates on your OBS overlay with the name, amount and message.",
+    title: "แจ้งเตือนโดเนทขึ้นจอสตรีม",
+    body: "เมื่อยืนยันสำเร็จ การแจ้งเตือนจะเด้งขึ้นบน overlay ใน OBS พร้อมชื่อ ยอดเงิน และข้อความทันที",
   },
 ];
 
 const FEATURES = [
   {
     icon: ShieldCheck,
-    title: "Verified, not trusted",
-    body: "Every slip is checked against the bank. Fake screenshots and reused slips don't get through.",
+    title: "ตรวจจริง ไม่ใช่แค่เชื่อใจ",
+    body: "ทุกสลิปถูกตรวจสอบกับธนาคาร สลิปปลอมหรือสลิปซ้ำผ่านไปไม่ได้",
   },
   {
     icon: Banknote,
-    title: "Money goes straight to you",
-    body: "Donors pay your account directly. No middleman holding funds, no payout waiting, no chargebacks.",
+    title: "เงินเข้าบัญชีคุณโดยตรง",
+    body: "ผู้ชมโอนเข้าบัญชีคุณเอง ไม่มีคนกลางถือเงิน ไม่ต้องรอถอน ไม่มีการเรียกเงินคืน",
   },
   {
     icon: Radio,
-    title: "Instant OBS overlay",
-    body: "One browser-source URL. Real-time alerts over a transparent background — drop it in and go live.",
+    title: "Overlay เรียลไทม์บน OBS",
+    body: "ลิงก์ Browser Source เดียว แจ้งเตือนเรียลไทม์บนพื้นหลังโปร่งใส วางแล้วไลฟ์ได้เลย",
   },
   {
     icon: Palette,
-    title: "Make it yours",
-    body: "Custom colors, fonts, sounds and alert GIFs that match your channel's brand.",
+    title: "ปรับแต่งให้เป็นสไตล์คุณ",
+    body: "เลือกสี ฟอนต์ เสียง และภาพ/GIF แจ้งเตือนให้เข้ากับช่องของคุณ",
   },
   {
     icon: Volume2,
-    title: "Thai text-to-speech",
-    body: "Donation messages read aloud on stream so you never miss a shout-out mid-game.",
+    title: "อ่านข้อความเป็นเสียงภาษาไทย",
+    body: "อ่านข้อความโดเนทออกเสียงบนสตรีม ไม่พลาดทุกการพูดถึงระหว่างเล่นเกม",
   },
   {
     icon: Zap,
-    title: "Any bank, any wallet",
-    body: "PromptPay and every major Thai bank are supported out of the box.",
+    title: "รองรับทุกธนาคารและวอลเล็ต",
+    body: "รองรับพร้อมเพย์และธนาคารหลักทุกแห่งในไทยตั้งแต่เริ่มใช้งาน",
   },
 ];
 
 export default function LandingPage() {
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "JustGift",
+      url: SITE.url,
+      inLanguage: "th-TH",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "JustGift",
+      applicationCategory: "WebApplication",
+      operatingSystem: "Web",
+      inLanguage: "th-TH",
+      description:
+        "ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีม",
+      url: SITE.url,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "THB" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <SiteHeader />
       <main className="flex-1">
         {/* ---------------- Hero ---------------- */}
@@ -87,17 +123,18 @@ export default function LandingPage() {
                 className="mb-5 border-primary/40 text-primary"
               >
                 <span className="mr-1.5 inline-block size-1.5 animate-pulse rounded-full bg-primary" />
-                Built for Thai streamers
+                สร้างมาเพื่อสตรีมเมอร์ไทย
               </Badge>
-              <h1 className="font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl">
-                Donation alerts that{" "}
-                <span className="text-primary text-glow">verify the slip</span>{" "}
-                — automatically.
+              <h1 className="font-heading text-5xl leading-[1.1] font-bold tracking-tight sm:text-6xl">
+                ระบบโดเนท ที่{" "}
+                <span className="text-primary text-glow">
+                  ตรวจสลิปให้อัตโนมัติ
+                </span>
               </h1>
               <p className="mt-6 max-w-md text-lg text-muted-foreground">
-                Your fans transfer and upload their slip. JustGift confirms it
-                with the bank and fires an alert on your stream in seconds. Money
-                goes straight to you.
+                ผู้ชมโอนเงินแล้วอัปโหลดสลิป JustGift
+                ตรวจสอบกับธนาคารแล้วแจ้งเตือนโดเนทขึ้นจอสตรีมภายในไม่กี่วินาที
+                เงินเข้าบัญชีคุณโดยตรง
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
@@ -107,7 +144,7 @@ export default function LandingPage() {
                     "glow-red h-11 px-6 text-base"
                   )}
                 >
-                  Start free <ArrowRight className="size-4" />
+                  เริ่มใช้ฟรี <ArrowRight className="size-4" />
                 </Link>
                 <a
                   href="#how"
@@ -116,11 +153,11 @@ export default function LandingPage() {
                     "h-11 px-6 text-base"
                   )}
                 >
-                  See how it works
+                  ดูวิธีใช้งาน
                 </a>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                No credit card. No commission on your donations.
+                ไม่ต้องใช้บัตรเครดิต · ไม่หักค่าธรรมเนียมจากยอดโดเนท
               </p>
             </div>
 
@@ -139,9 +176,9 @@ export default function LandingPage() {
                 <div className="relative grid min-h-64 place-items-center overflow-hidden rounded-lg bg-[repeating-conic-gradient(var(--muted)_0%_25%,transparent_0%_50%)] bg-[length:24px_24px] p-6">
                   <AlertCard
                     className="animate-pulse-glow"
-                    donorName="NongGamer123"
+                    donorName="น้องเกมเมอร์"
                     amount={250}
-                    message="สู้ ๆ นะครับ! Keep grinding 🔥"
+                    message="สู้ ๆ นะครับ! เล่นเก่งมาก 🔥"
                   />
                 </div>
               </div>
@@ -153,9 +190,9 @@ export default function LandingPage() {
         <section id="how" className="border-b border-border/60">
           <div className="mx-auto max-w-6xl px-4 py-20">
             <SectionHeading
-              eyebrow="How it works"
-              title="From slip to alert in seconds"
-              subtitle="Three steps. No manual checking, no trusting screenshots."
+              eyebrow="วิธีใช้งาน"
+              title="จากสลิปสู่การแจ้งเตือนในไม่กี่วินาที"
+              subtitle="สามขั้นตอน ไม่ต้องเช็กเอง ไม่ต้องเชื่อแคปหน้าจอ"
             />
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {STEPS.map((s, i) => (
@@ -183,9 +220,9 @@ export default function LandingPage() {
         <section id="features" className="border-b border-border/60">
           <div className="mx-auto max-w-6xl px-4 py-20">
             <SectionHeading
-              eyebrow="Features"
-              title="Everything an alert tool should be"
-              subtitle="Fast, verified, and yours to customize."
+              eyebrow="ฟีเจอร์"
+              title="ครบทุกอย่างที่ระบบโดเนทควรมี"
+              subtitle="เร็ว ตรวจสอบได้ และปรับแต่งเป็นสไตล์คุณ"
             />
             <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-border/60 bg-border/60 sm:grid-cols-2 lg:grid-cols-3">
               {FEATURES.map((f) => (
@@ -207,9 +244,9 @@ export default function LandingPage() {
         <section id="pricing" className="border-b border-border/60">
           <div className="mx-auto max-w-6xl px-4 py-20">
             <SectionHeading
-              eyebrow="Pricing"
-              title="Start free, upgrade when you grow"
-              subtitle="We never take a cut of your donations — they go straight to your account."
+              eyebrow="ราคา"
+              title="เริ่มฟรี อัปเกรดเมื่อโตขึ้น"
+              subtitle="เราไม่หักจากยอดโดเนทของคุณ — เงินเข้าบัญชีคุณโดยตรง"
             />
             <div className="mt-12 grid items-start gap-6 md:grid-cols-3">
               {PLANS.map((plan) => (
@@ -223,9 +260,7 @@ export default function LandingPage() {
                   )}
                 >
                   {plan.featured && (
-                    <Badge className="absolute -top-3 left-6">
-                      Most popular
-                    </Badge>
+                    <Badge className="absolute -top-3 left-6">ยอดนิยม</Badge>
                   )}
                   <h3 className="font-heading text-xl font-bold">{plan.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -233,11 +268,11 @@ export default function LandingPage() {
                   </p>
                   <div className="mt-5 flex items-baseline gap-1">
                     <span className="font-display text-4xl font-extrabold">
-                      {plan.price === 0 ? "Free" : `฿${plan.price}`}
+                      {plan.price === 0 ? "ฟรี" : `฿${plan.price}`}
                     </span>
                     {plan.price > 0 && (
                       <span className="text-sm text-muted-foreground">
-                        /month
+                        /เดือน
                       </span>
                     )}
                   </div>
@@ -258,9 +293,33 @@ export default function LandingPage() {
                       "mt-7 w-full"
                     )}
                   >
-                    {plan.price === 0 ? "Get started" : `Choose ${plan.name}`}
+                    {plan.price === 0 ? "เริ่มเลย" : `เลือกแพ็ก${plan.name}`}
                   </Link>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- FAQ ---------------- */}
+        <section id="faq" className="border-b border-border/60">
+          <div className="mx-auto max-w-3xl px-4 py-20">
+            <SectionHeading
+              eyebrow="คำถามที่พบบ่อย"
+              title="คำถามที่พบบ่อย"
+              subtitle="เกี่ยวกับระบบโดเนทและการรับโดเนทพร้อมเพย์"
+            />
+            <div className="mt-10 divide-y divide-border/60 overflow-hidden rounded-xl border border-border/60 bg-card">
+              {FAQ.map((item) => (
+                <details key={item.q} className="group p-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-heading text-base font-semibold [&::-webkit-details-marker]:hidden">
+                    {item.q}
+                    <Plus className="size-4 shrink-0 text-primary transition-transform group-open:rotate-45" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {item.a}
+                  </p>
+                </details>
               ))}
             </div>
           </div>
@@ -271,11 +330,11 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-glow" />
           <div className="relative mx-auto max-w-3xl px-4 py-24 text-center">
             <h2 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
-              Ready to get{" "}
-              <span className="text-primary text-glow">gifted</span>?
+              พร้อมรับ<span className="text-primary text-glow">โดเนท</span>
+              แล้วหรือยัง?
             </h2>
             <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-              Set up your page and overlay in minutes. Free forever to start.
+              ตั้งค่าเพจและ overlay ได้ในไม่กี่นาที เริ่มต้นฟรีตลอดไป
             </p>
             <Link
               href="/signup"
@@ -284,7 +343,7 @@ export default function LandingPage() {
                 "glow-red mt-8 h-11 px-7 text-base"
               )}
             >
-              Create your page <ArrowRight className="size-4" />
+              สร้างเพจของคุณ <ArrowRight className="size-4" />
             </Link>
           </div>
         </section>

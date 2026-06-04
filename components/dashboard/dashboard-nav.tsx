@@ -6,10 +6,10 @@ import { Bell, CreditCard, LayoutDashboard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+  { href: "/dashboard", label: "ภาพรวม", icon: LayoutDashboard, exact: true },
+  { href: "/dashboard/alerts", label: "การแจ้งเตือน", icon: Bell },
+  { href: "/dashboard/settings", label: "ตั้งค่า", icon: Settings },
+  { href: "/dashboard/billing", label: "การเรียกเก็บเงิน", icon: CreditCard },
 ];
 
 export function DashboardNav({

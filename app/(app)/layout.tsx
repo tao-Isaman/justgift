@@ -45,7 +45,7 @@ export default async function AppLayout({
             target="_blank"
             className="flex items-center gap-2 px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ExternalLink className="size-4" /> View my page
+            <ExternalLink className="size-4" /> ดูเพจของฉัน
           </Link>
           <div className="flex items-center gap-2 px-1">
             <Avatar className="size-8">

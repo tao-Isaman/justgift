@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Anuphan, Rajdhani, Orbitron } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { SEO_KEYWORDS } from "@/lib/constants";
 
 const anuphan = Anuphan({
   subsets: ["latin", "thai"],
@@ -29,28 +30,29 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "JustGift — Donation Alerts for Streamers",
+    default: "JustGift — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
     template: "%s · JustGift",
   },
   description:
-    "Verified donation alerts for Thai streamers. Donors transfer and upload a slip, we verify it instantly and fire an on-stream alert.",
-  keywords: [
-    "donation alert",
-    "streamer",
-    "OBS",
-    "PromptPay",
-    "slip verification",
-    "JustGift",
-  ],
+    "JustGift ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทผ่านพร้อมเพย์และทุกธนาคาร ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีมทันที เงินเข้าบัญชีคุณโดยตรง ไม่หักค่าธรรมเนียม",
+  keywords: SEO_KEYWORDS,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "JustGift — Donation Alerts for Streamers",
+    title: "JustGift — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
     description:
-      "Verified donation alerts for Thai streamers. Slip in, alert out.",
+      "รับโดเนทผ่านพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีมทันที เงินเข้าบัญชีคุณโดยตรง",
     url: siteUrl,
     siteName: "JustGift",
+    locale: "th_TH",
     type: "website",
   },
-  icons: { icon: "/favicon.ico" },
+  twitter: {
+    card: "summary_large_image",
+    title: "JustGift — ระบบโดเนทสำหรับสตรีมเมอร์ โดเนทพร้อมเพย์",
+    description:
+      "ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนขึ้นจอทันที",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -60,7 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="th"
       className={`${anuphan.variable} ${rajdhani.variable} ${orbitron.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >

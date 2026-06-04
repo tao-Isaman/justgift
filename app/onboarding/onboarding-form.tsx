@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { saveOnboarding } from "@/lib/actions/profile";
 import { onboardingSchema, type OnboardingValues } from "@/lib/validations";
 import { THAI_BANKS } from "@/lib/constants";
@@ -53,7 +60,7 @@ export function OnboardingForm({
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your page URL</FormLabel>
+              <FormLabel>ลิงก์เพจของคุณ</FormLabel>
               <FormControl>
                 <div className="flex items-center rounded-lg border border-input bg-transparent focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30">
                   <span className="pl-2.5 text-sm text-muted-foreground select-none">
@@ -62,7 +69,7 @@ export function OnboardingForm({
                   <input
                     {...field}
                     className="h-8 w-full bg-transparent pr-2.5 pl-0.5 text-sm outline-none placeholder:text-muted-foreground"
-                    placeholder="yourname"
+                    placeholder="เช่น mychannel"
                     autoCapitalize="none"
                     autoComplete="off"
                     spellCheck={false}
@@ -79,9 +86,9 @@ export function OnboardingForm({
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Display name</FormLabel>
+              <FormLabel>ชื่อที่แสดง</FormLabel>
               <FormControl>
-                <Input placeholder="Your channel name" {...field} />
+                <Input placeholder="ชื่อช่องของคุณ" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,13 +100,13 @@ export function OnboardingForm({
           name="receiverName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Account holder name</FormLabel>
+              <FormLabel>ชื่อบัญชีผู้รับเงิน</FormLabel>
               <FormControl>
-                <Input placeholder="Name on your bank / PromptPay" {...field} />
+                <Input placeholder="ชื่อบนบัญชี / พร้อมเพย์ของคุณ" {...field} />
               </FormControl>
               <FormDescription>
-                We match this against the donor&apos;s slip to verify the
-                payment reached you.
+                เราใช้ชื่อนี้จับคู่กับสลิปของผู้โดเนท
+                เพื่อยืนยันว่าเงินเข้าบัญชีคุณจริง
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -107,17 +114,17 @@ export function OnboardingForm({
         />
 
         <div className="rounded-lg border border-border/60 p-4">
-          <p className="mb-3 text-sm font-medium">How donors pay you</p>
+          <p className="mb-3 text-sm font-medium">ช่องทางรับโดเนท</p>
           <div className="space-y-4">
             <FormField
               control={form.control}
               name="promptpayId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>PromptPay ID</FormLabel>
+                  <FormLabel>พร้อมเพย์</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Phone or National ID"
+                      placeholder="เบอร์โทร หรือเลขบัตรประชาชน"
                       inputMode="numeric"
                       {...field}
                     />
@@ -130,7 +137,7 @@ export function OnboardingForm({
             <div className="relative flex items-center justify-center">
               <span className="hairline absolute inset-x-0 top-1/2 h-px" />
               <span className="relative bg-card px-2 text-xs text-muted-foreground">
-                and / or
+                และ / หรือ
               </span>
             </div>
 
@@ -140,20 +147,29 @@ export function OnboardingForm({
                 name="bankName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bank</FormLabel>
-                    <FormControl>
-                      <select
-                        {...field}
-                        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-                      >
-                        <option value="">Select a bank…</option>
+                    <FormLabel>ธนาคาร</FormLabel>
+                    <Select
+                      items={THAI_BANKS}
+                      value={field.value || null}
+                      onValueChange={(v) => field.onChange(v ?? "")}
+                      name={field.name}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className="w-full"
+                          onBlur={field.onBlur}
+                        >
+                          <SelectValue placeholder="เลือกธนาคาร…" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
                         {THAI_BANKS.map((b) => (
-                          <option key={b.value} value={b.value}>
+                          <SelectItem key={b.value} value={b.value}>
                             {b.label}
-                          </option>
+                          </SelectItem>
                         ))}
-                      </select>
-                    </FormControl>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -163,7 +179,7 @@ export function OnboardingForm({
                 name="bankAccount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Account number</FormLabel>
+                    <FormLabel>เลขที่บัญชี</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="xxx-x-xxxxx-x"
@@ -186,7 +202,7 @@ export function OnboardingForm({
           disabled={pending}
         >
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {pending ? "Saving…" : "Finish setup"}
+          {pending ? "กำลังบันทึก…" : "เสร็จสิ้น"}
         </Button>
       </form>
     </Form>

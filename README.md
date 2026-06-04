@@ -74,6 +74,12 @@ In the [Supabase dashboard](https://supabase.com/dashboard), create a project, t
 - **Authentication → Providers → Email**: for fast local testing you can turn
   **"Confirm email"** off. (With it on, signup shows a "check your email" step and
   the link returns to `/auth/callback`.)
+- **Authentication → Providers → Google**: enable it and paste your Google OAuth
+  **Client ID / Secret** from Google Cloud Console (Credentials → OAuth client,
+  authorized redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`).
+- **Authentication → URL Configuration**: set the Site URL, and add
+  `http://localhost:3000/auth/callback` (plus your production URL) to **Redirect
+  URLs** so the "Continue with Google" flow can return.
 
 ### 3. Environment variables
 

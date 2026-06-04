@@ -19,8 +19,8 @@ import { Button } from "@/components/ui/button";
 import { signIn } from "@/lib/actions/auth";
 
 const schema = z.object({
-  email: z.email("Enter a valid email"),
-  password: z.string().min(1, "Enter your password"),
+  email: z.email("กรอกอีเมลให้ถูกต้อง"),
+  password: z.string().min(1, "กรอกรหัสผ่าน"),
 });
 
 type Values = z.infer<typeof schema>;
@@ -47,7 +47,7 @@ export function LoginForm({ next }: { next?: string }) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>อีเมล</FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -65,7 +65,7 @@ export function LoginForm({ next }: { next?: string }) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>รหัสผ่าน</FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -80,7 +80,7 @@ export function LoginForm({ next }: { next?: string }) {
         />
         <Button type="submit" className="w-full" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {pending ? "Signing in…" : "Log in"}
+          {pending ? "กำลังเข้าสู่ระบบ…" : "เข้าสู่ระบบ"}
         </Button>
       </form>
     </Form>

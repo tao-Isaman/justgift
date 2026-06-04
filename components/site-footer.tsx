@@ -9,17 +9,17 @@ export function SiteFooter() {
           <Logo />
         </div>
         <p>
-          © {new Date().getFullYear()} {SITE.name}. Built for streamers.
+          © {new Date().getFullYear()} {SITE.name} · ระบบโดเนทสำหรับสตรีมเมอร์
         </p>
         <div className="flex items-center gap-5">
           <a href="#" className="transition-colors hover:text-foreground">
-            Terms
+            เงื่อนไขการใช้งาน
           </a>
           <a href="#" className="transition-colors hover:text-foreground">
-            Privacy
+            ความเป็นส่วนตัว
           </a>
           <a href="#" className="transition-colors hover:text-foreground">
-            Support
+            ช่วยเหลือ
           </a>
         </div>
       </div>

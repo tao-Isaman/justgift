@@ -11,7 +11,7 @@ import {
 import { OverlayCard } from "@/components/dashboard/overlay-card";
 import { DonationsFeed } from "@/components/dashboard/donations-feed";
 
-export const metadata = { title: "Overview" };
+export const metadata = { title: "ภาพรวม" };
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -43,26 +43,26 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">Overview</h1>
+        <h1 className="font-heading text-2xl font-bold">ภาพรวม</h1>
         <p className="text-sm text-muted-foreground">
-          Welcome back — here&apos;s how your channel is doing.
+          ยินดีต้อนรับกลับ — นี่คือภาพรวมช่องของคุณ
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           icon={<Banknote className="size-5" />}
-          label="Total raised"
+          label="ยอดโดเนทรวม"
           value={formatTHB(Number(s.total))}
         />
         <StatCard
           icon={<Gift className="size-5" />}
-          label="Donations"
+          label="จำนวนโดเนท"
           value={formatNumber(Number(s.donation_count))}
         />
         <StatCard
           icon={<CalendarDays className="size-5" />}
-          label="This month"
+          label="เดือนนี้"
           value={formatTHB(Number(s.month_total))}
         />
       </div>
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
         <OverlayCard overlayUrl={overlayUrl} pageUrl={pageUrl} />
         <Card>
           <CardHeader>
-            <CardTitle>Recent donations</CardTitle>
+            <CardTitle>โดเนทล่าสุด</CardTitle>
           </CardHeader>
           <CardContent>
             <DonationsFeed profileId={userId} initial={donations ?? []} />

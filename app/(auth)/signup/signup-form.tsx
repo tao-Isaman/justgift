@@ -22,10 +22,10 @@ import { signUp } from "@/lib/actions/auth";
 const schema = z.object({
   displayName: z
     .string()
-    .min(2, "At least 2 characters")
-    .max(40, "Too long"),
-  email: z.email("Enter a valid email"),
-  password: z.string().min(8, "At least 8 characters"),
+    .min(2, "อย่างน้อย 2 ตัวอักษร")
+    .max(40, "ยาวเกินไป"),
+  email: z.email("กรอกอีเมลให้ถูกต้อง"),
+  password: z.string().min(8, "อย่างน้อย 8 ตัวอักษร"),
 });
 
 type Values = z.infer<typeof schema>;
@@ -57,11 +57,13 @@ export function SignupForm() {
         <span className="grid size-12 place-items-center rounded-full bg-primary/10 text-primary">
           <MailCheck className="size-6" />
         </span>
-        <p className="font-heading text-lg font-semibold">Check your email</p>
+        <p className="font-heading text-lg font-semibold">
+          ตรวจสอบอีเมลของคุณ
+        </p>
         <p className="text-sm text-muted-foreground">
-          We sent a confirmation link to{" "}
-          <span className="text-foreground">{sentTo}</span>. Click it to finish
-          creating your account.
+          เราส่งลิงก์ยืนยันไปที่{" "}
+          <span className="text-foreground">{sentTo}</span> แล้ว
+          คลิกลิงก์เพื่อสร้างบัญชีให้เสร็จสมบูรณ์
         </p>
       </div>
     );
@@ -75,9 +77,9 @@ export function SignupForm() {
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Display name</FormLabel>
+              <FormLabel>ชื่อที่แสดง</FormLabel>
               <FormControl>
-                <Input placeholder="Your channel name" {...field} />
+                <Input placeholder="ชื่อช่องของคุณ" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +90,7 @@ export function SignupForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>อีเมล</FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -106,23 +108,23 @@ export function SignupForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>รหัสผ่าน</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   autoComplete="new-password"
-                  placeholder="At least 8 characters"
+                  placeholder="อย่างน้อย 8 ตัวอักษร"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Use 8 or more characters.</FormDescription>
+              <FormDescription>ใช้อย่างน้อย 8 ตัวอักษร</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="w-full" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {pending ? "Creating account…" : "Create account"}
+          {pending ? "กำลังสร้างบัญชี…" : "สร้างบัญชี"}
         </Button>
       </form>
     </Form>

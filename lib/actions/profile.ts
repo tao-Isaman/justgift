@@ -10,7 +10,7 @@ export async function saveOnboarding(
 ): Promise<{ error?: string }> {
   const parsed = onboardingSchema.safeParse(raw);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "ข้อมูลไม่ถูกต้อง" };
   }
   const v = parsed.data;
 
@@ -18,7 +18,7 @@ export async function saveOnboarding(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Not authenticated" };
+  if (!user) return { error: "ยังไม่ได้เข้าสู่ระบบ" };
 
   const { error } = await supabase
     .from("profiles")
@@ -35,7 +35,7 @@ export async function saveOnboarding(
 
   if (error) {
     if (error.code === "23505") {
-      return { error: "That username is already taken" };
+      return { error: "ชื่อผู้ใช้นี้ถูกใช้แล้ว" };
     }
     return { error: error.message };
   }

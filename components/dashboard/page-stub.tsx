@@ -21,10 +21,9 @@ export function PageStub({
           <span className="grid size-12 place-items-center rounded-lg bg-primary/10 text-primary">
             {icon}
           </span>
-          <Badge variant="outline">Coming soon</Badge>
+          <Badge variant="outline">เร็ว ๆ นี้</Badge>
           <p className="max-w-sm text-sm text-muted-foreground">
-            This is part of the build plan and will land in an upcoming
-            iteration.
+            ฟีเจอร์นี้อยู่ในแผนพัฒนา และจะเปิดให้ใช้งานเร็ว ๆ นี้
           </p>
         </CardContent>
       </Card>

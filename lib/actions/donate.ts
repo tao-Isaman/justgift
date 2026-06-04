@@ -63,12 +63,11 @@ export async function submitDonation(
     amount: input.amount,
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "ข้อมูลไม่ถูกต้อง" };
   }
   if (!input.payload) {
     return {
-      error:
-        "We couldn't read the QR code on that slip. Please upload a clearer image.",
+      error: "อ่าน QR บนสลิปไม่ได้ กรุณาอัปโหลดรูปที่ชัดกว่านี้",
     };
   }
 
@@ -79,7 +78,7 @@ export async function submitDonation(
     .select("id, overlay_token, receiver_name, promptpay_id, bank_account")
     .eq("username", input.username)
     .single();
-  if (!profile) return { error: "Streamer not found." };
+  if (!profile) return { error: "ไม่พบสตรีมเมอร์" };
 
   const { data: settings } = await admin
     .from("alert_settings")
@@ -96,23 +95,23 @@ export async function submitDonation(
   // 2) Amount is taken from the slip (source of truth), not the donor's claim.
   const verifiedAmount = Number(data.amount ?? 0);
   if (!verifiedAmount || verifiedAmount <= 0) {
-    return { error: "We couldn't read the amount from the slip." };
+    return { error: "อ่านยอดเงินจากสลิปไม่ได้" };
   }
   if (verifiedAmount < minAmount) {
-    return { error: `The minimum donation for this streamer is ฿${minAmount}.` };
+    return { error: `ยอดโดเนทขั้นต่ำของสตรีมเมอร์คือ ฿${minAmount}` };
   }
 
   // 3) Receiver must be this streamer.
   if (!receiverMatches(profile, data)) {
     return {
-      error: "This slip wasn't paid to this streamer's account.",
+      error: "สลิปนี้ไม่ได้โอนเข้าบัญชีของสตรีมเมอร์",
     };
   }
 
   // 4) Reject obviously stale slips (best-effort; skipped if unparseable).
   const ts = parseTransTimestamp(data);
   if (ts && Date.now() - ts.getTime() > MAX_SLIP_AGE_MS) {
-    return { error: "This slip is too old. Please donate with a recent transfer." };
+    return { error: "สลิปนี้เก่าเกินไป กรุณาโดเนทด้วยการโอนล่าสุด" };
   }
 
   // 5) Insert — the UNIQUE constraint on slip_trans_ref blocks slip reuse.
@@ -138,9 +137,9 @@ export async function submitDonation(
 
   if (insErr) {
     if (insErr.code === "23505") {
-      return { error: "This slip has already been used for a donation." };
+      return { error: "สลิปนี้ถูกใช้โดเนทไปแล้ว" };
     }
-    return { error: "We couldn't record this donation. Please try again." };
+    return { error: "บันทึกโดเนทไม่สำเร็จ กรุณาลองใหม่" };
   }
 
   // 6) Fire the on-stream alert (best-effort — donation is already recorded).

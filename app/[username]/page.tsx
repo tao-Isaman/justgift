@@ -12,7 +12,17 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  return { title: `Donate to @${username}` };
+  return {
+    title: `โดเนทให้ @${username}`,
+    description: `โดเนทให้ @${username} ผ่านพร้อมเพย์หรือโอนธนาคาร — ระบบโดเนทตรวจสลิปอัตโนมัติ แจ้งเตือนขึ้นจอสตรีมทันที | JustGift`,
+    alternates: { canonical: `/${username}` },
+    openGraph: {
+      title: `โดเนทให้ @${username} | JustGift`,
+      description:
+        "รับโดเนทพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอทันที",
+      type: "profile",
+    },
+  };
 }
 
 export default async function DonatePage({
@@ -73,11 +83,11 @@ export default async function DonatePage({
         </div>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          Powered by{" "}
+          ขับเคลื่อนโดย{" "}
           <Link href="/" className="text-primary hover:underline">
             JustGift
           </Link>{" "}
-          · Slips are verified with the bank before alerts are shown.
+          · ทุกสลิปถูกตรวจสอบกับธนาคารก่อนแสดงการแจ้งเตือน
         </p>
       </main>
     </div>

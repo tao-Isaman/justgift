@@ -18,10 +18,10 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
-      toast.success("Copied to clipboard");
+      toast.success("คัดลอกแล้ว");
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast.error("Couldn't copy");
+      toast.error("คัดลอกไม่สำเร็จ");
     }
   }
 

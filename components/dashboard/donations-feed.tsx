@@ -10,13 +10,16 @@ import { cn } from "@/lib/utils";
 const STATUS_STYLES: Record<DonationStatus, { label: string; className: string }> =
   {
     verified: {
-      label: "Verified",
+      label: "ตรวจสอบแล้ว",
       className: "bg-emerald-500/15 text-emerald-400",
     },
-    shown: { label: "Shown", className: "bg-sky-500/15 text-sky-400" },
-    pending: { label: "Pending", className: "bg-amber-500/15 text-amber-400" },
+    shown: { label: "แสดงแล้ว", className: "bg-sky-500/15 text-sky-400" },
+    pending: {
+      label: "รอดำเนินการ",
+      className: "bg-amber-500/15 text-amber-400",
+    },
     rejected: {
-      label: "Rejected",
+      label: "ปฏิเสธ",
       className: "bg-destructive/15 text-destructive",
     },
   };
@@ -72,7 +75,7 @@ export function DonationsFeed({
   if (items.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">
-        No donations yet. Share your page to get started.
+        ยังไม่มีโดเนท แชร์เพจของคุณเพื่อเริ่มรับโดเนท
       </p>
     );
   }

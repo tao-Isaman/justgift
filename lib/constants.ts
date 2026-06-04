@@ -8,6 +8,49 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_APP_URL ?? "https://justgift.app",
 } as const;
 
+/** Thai-first SEO keywords (donation / donation system / PromptPay donation). */
+export const SEO_KEYWORDS = [
+  "โดเนท",
+  "ระบบโดเนท",
+  "โดเนทพร้อมเพย์",
+  "รับโดเนท",
+  "ระบบรับโดเนท",
+  "แจ้งเตือนโดเนท",
+  "โดเนทสตรีมเมอร์",
+  "ระบบโดเนทสตรีมเมอร์",
+  "โดเนทเกม",
+  "ตรวจสลิปโดเนท",
+  "donate",
+  "donation alert",
+  "streamer donation",
+  "PromptPay",
+  "JustGift",
+];
+
+/** Thai FAQ — also rendered as FAQPage structured data on the landing page. */
+export const FAQ: { q: string; a: string }[] = [
+  {
+    q: "JustGift คือระบบโดเนทแบบไหน",
+    a: "JustGift คือระบบโดเนทสำหรับสตรีมเมอร์ ให้แฟน ๆ โดเนทผ่านพร้อมเพย์หรือโอนผ่านธนาคารแล้วอัปโหลดสลิป ระบบจะตรวจสลิปอัตโนมัติแล้วแจ้งเตือนโดเนทขึ้นจอสตรีมทันที",
+  },
+  {
+    q: "รับโดเนทผ่านพร้อมเพย์ได้ไหม",
+    a: "ได้ครับ JustGift รองรับโดเนทพร้อมเพย์และทุกธนาคารในไทย เงินโดเนทเข้าบัญชีของคุณโดยตรง ไม่ผ่านคนกลาง",
+  },
+  {
+    q: "ระบบโดเนทตรวจสลิปอย่างไร",
+    a: "ทุกสลิปจะถูกตรวจสอบกับธนาคารผ่าน slip.rdcw.co.th ว่าจ่ายจริง จ่ายถูกบัญชี และยอดถูกต้อง สลิปปลอมหรือสลิปซ้ำจะถูกปฏิเสธอัตโนมัติ",
+  },
+  {
+    q: "มีค่าธรรมเนียมหักจากยอดโดเนทไหม",
+    a: "ไม่มี JustGift ไม่หักเปอร์เซ็นต์จากยอดโดเนท เงินทั้งหมดเข้าบัญชีคุณโดยตรง เราคิดค่าบริการแบบสมาชิกรายเดือนเท่านั้น",
+  },
+  {
+    q: "ใช้ระบบโดเนทกับ OBS ได้ไหม",
+    a: "ได้ เพียงคัดลอก URL overlay จากแดชบอร์ดไปวางเป็น Browser Source ใน OBS ก็แสดงการแจ้งเตือนโดเนทบนสตรีมได้ทันที",
+  },
+];
+
 /** Usernames that can't be claimed because they collide with app routes. */
 export const RESERVED_USERNAMES = new Set([
   "login",
@@ -43,43 +86,43 @@ export type PlanDef = {
 export const PLANS: PlanDef[] = [
   {
     id: "free",
-    name: "Rookie",
+    name: "ฟรี",
     price: 0,
-    tagline: "Everything you need to start taking donations.",
+    tagline: "ทุกอย่างที่จำเป็นสำหรับเริ่มรับโดเนท",
     features: [
-      "Verified slip donations",
-      "Real-time OBS overlay",
-      "1 alert style",
-      "Donation history",
-      "JustGift watermark on alerts",
+      "รับโดเนทที่ตรวจสลิปแล้ว",
+      "overlay OBS เรียลไทม์",
+      "สไตล์แจ้งเตือน 1 แบบ",
+      "ประวัติการโดเนท",
+      "มีลายน้ำ JustGift บนการแจ้งเตือน",
     ],
   },
   {
     id: "pro",
-    name: "Pro",
+    name: "โปร",
     price: 99,
-    tagline: "Make your alerts yours.",
+    tagline: "ทำให้การแจ้งเตือนเป็นสไตล์ของคุณ",
     featured: true,
     features: [
-      "Everything in Rookie",
-      "Custom alert colors, fonts & sounds",
-      "Custom alert image / GIF",
-      "Thai text-to-speech",
-      "No watermark",
-      "Minimum donation amount",
+      "ทุกอย่างในแพ็กฟรี",
+      "ปรับสี ฟอนต์ และเสียงแจ้งเตือนเอง",
+      "ใส่ภาพ / GIF แจ้งเตือนเอง",
+      "อ่านข้อความเป็นเสียงภาษาไทย",
+      "ไม่มีลายน้ำ",
+      "ตั้งยอดโดเนทขั้นต่ำได้",
     ],
   },
   {
     id: "elite",
-    name: "Elite",
+    name: "อีลิท",
     price: 199,
-    tagline: "For full-time creators.",
+    tagline: "สำหรับครีเอเตอร์มืออาชีพ",
     features: [
-      "Everything in Pro",
-      "Donation goals & leaderboards",
-      "Media share (clips on stream)",
-      "Multiple alert variants",
-      "Priority support",
+      "ทุกอย่างในแพ็กโปร",
+      "เป้าหมายโดเนทและลีดเดอร์บอร์ด",
+      "แชร์มีเดีย (คลิปขึ้นจอ)",
+      "สไตล์แจ้งเตือนหลายแบบ",
+      "ซัพพอร์ตแบบเร่งด่วน",
     ],
   },
 ];
@@ -93,8 +136,8 @@ export const ALERT_ANIMATIONS: { value: AlertAnimation; label: string }[] = [
 
 /** Web Speech API voice hints (best-effort; resolved client-side). */
 export const TTS_VOICES: { value: string; label: string }[] = [
-  { value: "th-TH", label: "Thai (default)" },
-  { value: "en-US", label: "English (US)" },
+  { value: "th-TH", label: "ไทย (ค่าเริ่มต้น)" },
+  { value: "en-US", label: "อังกฤษ (US)" },
 ];
 
 /** Major Thai banks + wallets for the payout account selector. */

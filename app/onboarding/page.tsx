@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { OnboardingForm } from "./onboarding-form";
 
-export const metadata = { title: "Set up your page" };
+export const metadata = { title: "ตั้งค่าเพจ" };
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -37,10 +37,10 @@ export default async function OnboardingPage() {
         </div>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Set up your page</CardTitle>
+            <CardTitle className="text-2xl">ตั้งค่าเพจของคุณ</CardTitle>
             <CardDescription>
-              Claim your URL and tell us where donations should land. You can
-              change this later.
+              ตั้งชื่อลิงก์เพจและบอกเราว่าให้โดเนทเข้าบัญชีไหน
+              เปลี่ยนภายหลังได้
             </CardDescription>
           </CardHeader>
           <CardContent>

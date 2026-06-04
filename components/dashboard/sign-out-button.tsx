@@ -16,14 +16,14 @@ export function SignOutButton({ compact = false }: { compact?: boolean }) {
       className={cn(!compact && "w-full justify-start text-muted-foreground")}
       disabled={pending}
       onClick={() => startTransition(() => signOut())}
-      aria-label="Sign out"
+      aria-label="ออกจากระบบ"
     >
       {pending ? (
         <Loader2 className="size-4 animate-spin" />
       ) : (
         <LogOut className="size-4" />
       )}
-      {!compact && (pending ? "Signing out…" : "Sign out")}
+      {!compact && (pending ? "กำลังออก…" : "ออกจากระบบ")}
     </Button>
   );
 }

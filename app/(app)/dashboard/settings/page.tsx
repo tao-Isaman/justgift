@@ -1,13 +1,13 @@
 import { Settings } from "lucide-react";
 import { PageStub } from "@/components/dashboard/page-stub";
 
-export const metadata = { title: "Settings" };
+export const metadata = { title: "ตั้งค่า" };
 
 export default function SettingsPage() {
   return (
     <PageStub
-      title="Settings"
-      description="Profile, payout account and account preferences."
+      title="ตั้งค่า"
+      description="โปรไฟล์ บัญชีรับเงิน และการตั้งค่าบัญชี"
       icon={<Settings className="size-6" />}
     />
   );

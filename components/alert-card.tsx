@@ -65,7 +65,7 @@ export function AlertCard({
             <span className="font-bold" style={{ color: accentColor }}>
               {donorName}
             </span>{" "}
-            donated
+            โดเนท
           </p>
           <p
             className="font-display text-3xl font-extrabold tabular-nums"

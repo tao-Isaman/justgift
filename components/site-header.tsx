@@ -4,9 +4,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#features", label: "Features" },
-  { href: "#pricing", label: "Pricing" },
+  { href: "#how", label: "วิธีใช้งาน" },
+  { href: "#features", label: "ฟีเจอร์" },
+  { href: "#pricing", label: "ราคา" },
+  { href: "#faq", label: "คำถามที่พบบ่อย" },
 ];
 
 export function SiteHeader() {
@@ -30,13 +31,13 @@ export function SiteHeader() {
             href="/login"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
           >
-            Log in
+            เข้าสู่ระบบ
           </Link>
           <Link
             href="/signup"
             className={cn(buttonVariants({ size: "sm" }), "glow-red-sm")}
           >
-            Start free
+            เริ่มใช้ฟรี
           </Link>
         </div>
       </div>

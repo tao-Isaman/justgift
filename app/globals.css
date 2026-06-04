@@ -4,12 +4,45 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* FC Vision (Thai) — primary body typeface.
+   Uses an installed copy first, then licensed files in /public/fonts.
+   Falls back to Anuphan (loaded via next/font) if neither is present. */
+@font-face {
+  font-family: "FC Vision";
+  src: local("FC Vision"), local("FCVision"),
+    url("/fonts/FCVision-Regular.woff2") format("woff2"),
+    url("/fonts/FCVision-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FC Vision";
+  src: local("FC Vision Medium"), local("FCVision-Medium"),
+    url("/fonts/FCVision-Medium.woff2") format("woff2"),
+    url("/fonts/FCVision-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FC Vision";
+  src: local("FC Vision Bold"), local("FCVision-Bold"),
+    url("/fonts/FCVision-Bold.woff2") format("woff2"),
+    url("/fonts/FCVision-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --font-sans: var(--font-anuphan);
-  --font-heading: var(--font-rajdhani);
+  --font-sans: "FC Vision", var(--font-anuphan), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-heading: var(--font-rajdhani), "FC Vision", var(--font-anuphan),
+    sans-serif;
   --font-display: var(--font-orbitron);
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 

@@ -20,7 +20,9 @@ export default async function OverlayPage({
   if (!profile) {
     return (
       <div className="fixed inset-0 grid place-items-center">
-        <p className="font-mono text-sm text-white/40">Invalid overlay token</p>
+        <p className="font-mono text-sm text-white/40">
+          โทเคน overlay ไม่ถูกต้อง
+        </p>
       </div>
     );
   }
