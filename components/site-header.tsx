@@ -1,0 +1,45 @@
+import Link from "next/link";
+import { Logo } from "@/components/logo";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { href: "#how", label: "How it works" },
+  { href: "#features", label: "Features" },
+  { href: "#pricing", label: "Pricing" },
+];
+
+export function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+        <Logo />
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            Log in
+          </Link>
+          <Link
+            href="/signup"
+            className={cn(buttonVariants({ size: "sm" }), "glow-red-sm")}
+          >
+            Start free
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
