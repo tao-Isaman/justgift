@@ -46,7 +46,7 @@ export default async function OverlayPage({
         ttsEnabled: settings?.tts_enabled ?? false,
         ttsVoice: settings?.tts_voice ?? null,
         animation: settings?.animation ?? "slide",
-        position: settings?.position ?? "top-center",
+        position: "top-center",
         soundVolume: settings?.sound_volume ?? 0.8,
         ttsRate: settings?.tts_rate ?? 1,
         ttsVolume: settings?.tts_volume ?? 1,

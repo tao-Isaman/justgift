@@ -26,7 +26,6 @@ export async function updateAlertSettings(
     .from("alert_settings")
     .update({
       animation: v.animation,
-      position: v.position,
       duration_ms: v.durationMs,
       accent_color: v.accentColor,
       text_color: v.textColor,

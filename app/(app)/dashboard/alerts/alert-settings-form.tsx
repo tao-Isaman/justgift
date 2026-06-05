@@ -45,7 +45,6 @@ import {
 } from "@/lib/constants";
 import type {
   AlertAnimation,
-  AlertPosition,
   AlertSettings,
   Plan,
 } from "@/lib/supabase/types";
@@ -56,13 +55,6 @@ const ANIMATIONS: { value: AlertAnimation; label: string }[] = [
   { value: "zoom", label: "ซูม" },
   { value: "flip", label: "พลิก 3D" },
   { value: "glitch", label: "กลิตช์" },
-];
-
-const POSITIONS: { value: AlertPosition; label: string }[] = [
-  { value: "top-left", label: "บนซ้าย" },
-  { value: "top-center", label: "บนกลาง" },
-  { value: "top-right", label: "บนขวา" },
-  { value: "center", label: "กลางจอ" },
 ];
 
 const SAMPLE = {
@@ -96,7 +88,6 @@ export function AlertSettingsForm({
     resolver: zodResolver(alertSettingsSchema),
     defaultValues: {
       animation: settings?.animation ?? "slide",
-      position: settings?.position ?? "top-center",
       durationMs: Number(settings?.duration_ms ?? 7000),
       accentColor: settings?.accent_color ?? "#dc2626",
       textColor: settings?.text_color ?? "#ffffff",
@@ -198,32 +189,6 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
-          <Row label="ตำแหน่งบนจอ">
-            <Controller
-              control={control}
-              name="position"
-              render={({ field }) => (
-                <Select
-                  items={POSITIONS}
-                  value={field.value}
-                  onValueChange={(val) =>
-                    field.onChange((val as AlertPosition) ?? "top-center")
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {POSITIONS.map((p) => (
-                      <SelectItem key={p.value} value={p.value}>
-                        {p.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Row>
           <Row label={`ระยะเวลาแสดง — ${(v.durationMs / 1000).toFixed(1)} วิ`}>
             <Controller
               control={control}
@@ -241,6 +206,9 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
+          <p className="text-xs text-muted-foreground">
+            ตำแหน่งบนจอปรับได้เองใน OBS โดยลาก Browser Source ไปวางตรงไหนก็ได้
+          </p>
         </Section>
 
         {/* Appearance — Pro */}

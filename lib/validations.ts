@@ -50,7 +50,6 @@ const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, "สีไม่ถูก
 
 export const alertSettingsSchema = z.object({
   animation: z.enum(["slide", "zoom", "flip", "glitch"]),
-  position: z.enum(["top-left", "top-center", "top-right", "center"]),
   durationMs: z.number().min(1000).max(30000),
   accentColor: hexColor,
   textColor: hexColor,
