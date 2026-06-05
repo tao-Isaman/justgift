@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { AlertCard } from "@/components/alert-card";
 import { GoalBar } from "@/components/goal-bar";
+import { LeaderboardCard } from "@/components/leaderboard-card";
 import { CopyButton } from "@/components/dashboard/copy-button";
 import {
   ALERT_VARIANTS,
@@ -69,6 +70,12 @@ const SAMPLE = {
   amount: 250,
   message: "ขอบคุณสำหรับสตรีมครับ! 🎉",
 };
+
+const SAMPLE_LEADERBOARD = [
+  { name: "ผู้ใจดี", total: 5200 },
+  { name: "แฟนคลับ", total: 3100 },
+  { name: "NongGamer", total: 1500 },
+];
 
 export function AlertSettingsForm({
   plan,
@@ -160,9 +167,9 @@ export function AlertSettingsForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="grid gap-6 lg:grid-cols-3"
+      className="grid gap-6 lg:grid-cols-5"
     >
-      <div className="space-y-6 lg:col-span-2">
+      <div className="space-y-6 lg:col-span-3 lg:order-2">
         {/* Style — all plans */}
         <Section title="สไตล์">
           <Row label="อนิเมชัน">
@@ -549,27 +556,6 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
-          <div className="space-y-2">
-            <Label>ตัวอย่างแถบเป้าหมาย</Label>
-            <GoalBar
-              title={v.goalTitle || "เป้าหมายโดเนท"}
-              total={Math.round((v.goalAmount || 0) * 0.65)}
-              goalAmount={v.goalAmount || 0}
-              accentColor={v.accentColor}
-            />
-          </div>
-          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 p-2.5">
-            <input
-              readOnly
-              value={`${overlayUrl}/goal`}
-              onFocus={(e) => e.currentTarget.select()}
-              className="h-8 min-w-0 flex-1 bg-transparent font-mono text-xs text-muted-foreground outline-none"
-            />
-            <CopyButton value={`${overlayUrl}/goal`} />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            เพิ่ม URL นี้เป็น Browser Source แยกใน OBS เพื่อแสดงแถบเป้าหมาย
-          </p>
         </Section>
 
         {/* Media share — Elite */}
@@ -766,12 +752,12 @@ export function AlertSettingsForm({
         </Section>
       </div>
 
-      {/* Preview / actions */}
-      <div className="lg:col-span-1">
+      {/* Previews + actions — left column */}
+      <div className="lg:col-span-2 lg:order-1">
         <div className="space-y-3 lg:sticky lg:top-6">
           <Card>
             <CardContent className="space-y-3">
-              <p className="text-sm font-medium">ตัวอย่าง</p>
+              <p className="text-sm font-medium">ตัวอย่างการแจ้งเตือน</p>
               <div className="relative grid min-h-64 place-items-center overflow-hidden rounded-lg border border-border/60 bg-[repeating-conic-gradient(var(--muted)_0%_25%,transparent_0%_50%)] bg-[length:22px_22px] p-5">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -851,6 +837,45 @@ export function AlertSettingsForm({
               </div>
             </CardContent>
           </Card>
+
+          {/* Goal preview */}
+          <Card>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">ตัวอย่างแถบเป้าหมาย</p>
+                {!elite ? <UpgradeBadge /> : null}
+              </div>
+              <div className={cn(!elite && "opacity-60")}>
+                <GoalBar
+                  title={v.goalTitle || "เป้าหมายโดเนท"}
+                  total={Math.round((v.goalAmount || 0) * 0.65)}
+                  goalAmount={v.goalAmount || 0}
+                  accentColor={v.accentColor}
+                />
+              </div>
+              <UrlRow label="Overlay เป้าหมาย (Elite)" url={`${overlayUrl}/goal`} />
+            </CardContent>
+          </Card>
+
+          {/* Leaderboard preview */}
+          <Card>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">ตัวอย่างลีดเดอร์บอร์ด</p>
+                {!elite ? <UpgradeBadge /> : null}
+              </div>
+              <div className={cn(!elite && "opacity-60")}>
+                <LeaderboardCard
+                  accentColor={v.accentColor}
+                  entries={SAMPLE_LEADERBOARD}
+                />
+              </div>
+              <UrlRow
+                label="Overlay ลีดเดอร์บอร์ด (Elite)"
+                url={`${overlayUrl}/leaderboard`}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </form>
@@ -926,6 +951,33 @@ function ColorInput({
         disabled={disabled}
         className="font-mono"
       />
+    </div>
+  );
+}
+
+function UpgradeBadge() {
+  return (
+    <Link href="/dashboard/billing">
+      <Badge variant="outline" className="gap-1">
+        <Lock className="size-3" /> อัปเกรดเป็นอีลิท
+      </Badge>
+    </Link>
+  );
+}
+
+function UrlRow({ label, url }: { label: string; url: string }) {
+  return (
+    <div>
+      <p className="mb-1 text-xs text-muted-foreground">{label}</p>
+      <div className="flex items-center gap-2">
+        <input
+          readOnly
+          value={url}
+          onFocus={(e) => e.currentTarget.select()}
+          className="h-9 min-w-0 flex-1 rounded-lg border border-input bg-input/30 px-2.5 font-mono text-xs text-muted-foreground outline-none"
+        />
+        <CopyButton value={url} />
+      </div>
     </div>
   );
 }

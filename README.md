@@ -121,6 +121,8 @@ The OBS overlay (`/overlay/<token>`) supports:
 - **Custom font** (Pro): Rajdhani / Orbitron / Anuphan / FC Vision
 - **Donation goal bar** (Elite): a separate browser source at
   `/overlay/<token>/goal` that fills live as donations come in
+- **Leaderboard** (Elite): a top-donors browser source at
+  `/overlay/<token>/leaderboard` that re-ranks live as donations arrive
 - **Media share** (Elite): donors attach a YouTube link (amount-gated + max
   length); it plays after the alert and can be skipped from the dashboard
 - **Amount-tier variants** (Elite): different accent / image / animation per
