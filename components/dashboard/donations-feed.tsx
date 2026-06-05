@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { Donation, DonationStatus } from "@/lib/supabase/types";
 import { formatTHB, timeAgo } from "@/lib/format";
+import { playAlertSound } from "@/lib/overlay-fx";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -45,8 +47,17 @@ export function DonationsFeed({
           table: "donations",
           filter: `profile_id=eq.${profileId}`,
         },
-        (payload) =>
-          setItems((prev) => [payload.new as Donation, ...prev].slice(0, 50))
+        (payload) => {
+          const d = payload.new as Donation;
+          setItems((prev) => [d, ...prev].slice(0, 50));
+          toast.success(
+            `💸 ${d.donor_name} โดเนท ${formatTHB(
+              Number(d.verified_amount ?? d.amount)
+            )}`,
+            { description: d.message ?? undefined }
+          );
+          playAlertSound(null, 0.5, false);
+        }
       )
       .on(
         "postgres_changes",

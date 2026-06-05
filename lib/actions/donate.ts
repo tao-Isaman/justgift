@@ -24,9 +24,11 @@ function digitsTail(value: string | null | undefined, n = 4): string {
 }
 
 /**
- * Verify that the slip was actually paid to THIS streamer. Thai slips mask the
- * receiver, so we match on the last digits of the account/proxy OR overlapping
- * name tokens. Fails closed when there's no usable signal.
+ * Verify that the slip was actually paid to THIS streamer's PromptPay number or
+ * bank account. Thai slips mask the receiver to the last 4 digits, so we compare
+ * those. When the slip exposes account digits, the match is decided strictly by
+ * them; the receiver name is only a fallback when no digits are available.
+ * Fails closed when there's no usable signal.
  */
 function receiverMatches(
   profile: {
@@ -37,11 +39,24 @@ function receiverMatches(
   data: RdcwData
 ): boolean {
   const recv = data.receiver ?? {};
-  const slipAcct = digitsTail(recv.account?.value ?? recv.proxy?.value);
-  const targetAcct =
-    digitsTail(profile.bank_account) || digitsTail(profile.promptpay_id);
-  if (slipAcct && targetAcct && slipAcct === targetAcct) return true;
 
+  // Last-4 visible on the slip for the receiving bank account / PromptPay proxy.
+  const slipTails = [recv.account?.value, recv.proxy?.value]
+    .map((v) => digitsTail(v))
+    .filter((t) => t.length === 4);
+
+  // Last-4 of the streamer's registered bank account / PromptPay number.
+  const targetTails = [profile.bank_account, profile.promptpay_id]
+    .map((v) => digitsTail(v))
+    .filter((t) => t.length === 4);
+
+  // Decisive when both sides expose account digits: the money must have landed
+  // on the streamer's registered PromptPay/account.
+  if (slipTails.length && targetTails.length) {
+    return slipTails.some((s) => targetTails.includes(s));
+  }
+
+  // Fallback: slip masked everything but the name — use it as a weak signal.
   const slipName = (recv.displayName || recv.name || "").toLowerCase();
   if (profile.receiver_name && slipName) {
     const tokens = profile.receiver_name
