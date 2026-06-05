@@ -129,7 +129,7 @@ export default function LandingPage() {
               <h1 className="font-heading text-5xl leading-[1.1] font-bold tracking-tight sm:text-6xl">
                 ระบบโดเนท ที่{" "}
                 <span className="text-primary text-glow">
-                  ตรวจสลิปให้อัตโนมัติ
+                  ใช้ฟรี ใช้ง่าย
                 </span>
               </h1>
               <p className="mt-6 max-w-md text-lg text-muted-foreground">
