@@ -33,6 +33,7 @@ export type Database = {
           plan: Plan;
           onboarded: boolean;
           plan_expires_at: string | null;
+          is_admin: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -50,6 +51,7 @@ export type Database = {
           plan?: Plan;
           onboarded?: boolean;
           plan_expires_at?: string | null;
+          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -67,6 +69,7 @@ export type Database = {
           plan?: Plan;
           onboarded?: boolean;
           plan_expires_at?: string | null;
+          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -285,6 +288,35 @@ export type Database = {
       expire_subscriptions: {
         Args: Record<string, never>;
         Returns: number;
+      };
+      admin_overview: {
+        Args: Record<string, never>;
+        Returns: {
+          streamers: number;
+          onboarded: number;
+          pro_active: number;
+          elite_active: number;
+          donations_count: number;
+          donations_total: number;
+          month_donations_count: number;
+          month_donations_total: number;
+          sub_revenue: number;
+          month_sub_revenue: number;
+        }[];
+      };
+      admin_users: {
+        Args: { p_search?: string; p_limit?: number; p_offset?: number };
+        Returns: {
+          id: string;
+          username: string | null;
+          display_name: string | null;
+          plan: Plan;
+          plan_expires_at: string | null;
+          created_at: string;
+          is_admin: boolean;
+          donations_count: number;
+          total_raised: number;
+        }[];
       };
     };
     Enums: Record<string, never>;

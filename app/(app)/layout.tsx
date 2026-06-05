@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Shield } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
@@ -20,7 +20,7 @@ export default async function AppLayout({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("username, display_name, avatar_url, onboarded")
+    .select("username, display_name, avatar_url, onboarded, is_admin")
     .eq("id", user.id)
     .single();
 
@@ -40,6 +40,14 @@ export default async function AppLayout({
           <DashboardNav />
         </div>
         <div className="space-y-3 border-t border-border/60 pt-4">
+          {profile.is_admin ? (
+            <Link
+              href="/admin"
+              className="flex items-center gap-2 px-3 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+            >
+              <Shield className="size-4" /> แอดมิน
+            </Link>
+          ) : null}
           <Link
             href={`/${profile.username}`}
             target="_blank"

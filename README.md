@@ -73,8 +73,8 @@ In the [Supabase dashboard](https://supabase.com/dashboard), create a project, t
   new-user trigger), `0002_overlay.sql` (overlay alert-settings columns), then
   `0003_subscriptions.sql` (plan expiry + subscription payments), then
   `0004_goals_stats.sql` (donation goals + dashboard stats/leaderboard), then
-  `0005_media_variants.sql` (media share + amount-tier variants). All are
-  idempotent and safe to re-run.
+  `0005_media_variants.sql` (media share + amount-tier variants), then
+  `0006_admin.sql` (admin portal). All are idempotent and safe to re-run.
 - **Authentication → Providers → Email**: for fast local testing you can turn
   **"Confirm email"** off. (With it on, signup shows a "check your email" step and
   the link returns to `/auth/callback`.)
@@ -158,6 +158,21 @@ Setup:
 
 **Monthly receive caps** (enforced in `submitDonation`, shown on the dashboard):
 Free **20** / Pro **120** / Elite **unlimited** verified donations per month.
+
+## Admin portal
+
+A hidden portal at **`/admin`** + **`/admin/users`**, gated server-side by
+`profiles.is_admin` (non-admins get a 404). Make yourself an admin once:
+
+```sql
+update public.profiles set is_admin = true where username = 'yourname';
+```
+
+It surfaces platform stats (streamers, active Pro/Elite, donation volume,
+subscription revenue, recent payments/donations) and a searchable user list
+where you can **grant a package for free** (a ฿0 `method='admin'` comp that
+reuses `apply_subscription`) or revoke a streamer to Free. Admin reads use the
+service-role client after verifying the caller, so RLS isn't in the way.
 
 ## Security & anti-fraud
 
