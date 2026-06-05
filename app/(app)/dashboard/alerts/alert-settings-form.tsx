@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertCard } from "@/components/alert-card";
+import { GoalBar } from "@/components/goal-bar";
 import { CopyButton } from "@/components/dashboard/copy-button";
 import {
   ALERT_VARIANTS,
@@ -548,6 +549,15 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
+          <div className="space-y-2">
+            <Label>ตัวอย่างแถบเป้าหมาย</Label>
+            <GoalBar
+              title={v.goalTitle || "เป้าหมายโดเนท"}
+              total={Math.round((v.goalAmount || 0) * 0.65)}
+              goalAmount={v.goalAmount || 0}
+              accentColor={v.accentColor}
+            />
+          </div>
           <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 p-2.5">
             <input
               readOnly
