@@ -1,4 +1,4 @@
-import { Banknote, CreditCard, Gift, Users } from "lucide-react";
+import { Banknote, CreditCard, Crown, Gift, Users, UserCheck } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatNumber, formatTHB, timeAgo } from "@/lib/format";
 import {
@@ -14,21 +14,30 @@ export const metadata = { title: "แอดมิน" };
 export default async function AdminOverviewPage() {
   const svc = createAdminClient();
 
-  const [{ data: ov }, { data: payments }, { data: donations }] =
-    await Promise.all([
-      svc.rpc("admin_overview"),
-      svc
-        .from("subscription_payments")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(8),
-      svc
-        .from("donations")
-        .select("*")
-        .eq("status", "verified")
-        .order("created_at", { ascending: false })
-        .limit(8),
-    ]);
+  const [
+    { data: ov },
+    { data: payments },
+    { data: donations },
+    { data: memPays },
+  ] = await Promise.all([
+    svc.rpc("admin_overview"),
+    svc
+      .from("subscription_payments")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(8),
+    svc
+      .from("donations")
+      .select("*")
+      .eq("status", "verified")
+      .order("created_at", { ascending: false })
+      .limit(8),
+    svc
+      .from("membership_payments")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(8),
+  ]);
 
   const o = ov?.[0] ?? {
     streamers: 0,
@@ -41,12 +50,17 @@ export default async function AdminOverviewPage() {
     month_donations_total: 0,
     sub_revenue: 0,
     month_sub_revenue: 0,
+    members_count: 0,
+    active_members: 0,
+    membership_revenue: 0,
+    month_membership_revenue: 0,
   };
 
   const ids = Array.from(
     new Set([
       ...(payments ?? []).map((p) => p.profile_id),
       ...(donations ?? []).map((d) => d.profile_id),
+      ...(memPays ?? []).map((m) => m.streamer_id),
     ])
   );
   const { data: profs } = await svc
@@ -79,7 +93,7 @@ export default async function AdminOverviewPage() {
         />
         <Stat
           icon={<CreditCard className="size-5" />}
-          label="รายได้ค่าสมาชิก"
+          label="รายได้ค่าสมาชิก (SaaS)"
           value={formatTHB(Number(o.sub_revenue))}
           sub={`เดือนนี้ ${formatTHB(Number(o.month_sub_revenue))}`}
         />
@@ -89,12 +103,24 @@ export default async function AdminOverviewPage() {
           value={formatTHB(Number(o.month_donations_total))}
           sub={`${formatNumber(Number(o.month_donations_count))} ครั้ง`}
         />
+        <Stat
+          icon={<UserCheck className="size-5" />}
+          label="สมาชิก (ใช้งานอยู่ / ทั้งหมด)"
+          value={`${formatNumber(Number(o.active_members))} / ${formatNumber(Number(o.members_count))}`}
+          sub="สมาชิกของสตรีมเมอร์ทั้งระบบ"
+        />
+        <Stat
+          icon={<Crown className="size-5" />}
+          label="ยอดค่าสมาชิก (ถึงสตรีมเมอร์)"
+          value={formatTHB(Number(o.membership_revenue))}
+          sub={`เดือนนี้ ${formatTHB(Number(o.month_membership_revenue))}`}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>การชำระค่าสมาชิกล่าสุด</CardTitle>
+            <CardTitle>การชำระค่าสมาชิก (SaaS) ล่าสุด</CardTitle>
           </CardHeader>
           <CardContent>
             {(payments ?? []).length === 0 ? (
@@ -104,10 +130,7 @@ export default async function AdminOverviewPage() {
             ) : (
               <ul className="divide-y divide-border/60 text-sm">
                 {(payments ?? []).map((p) => (
-                  <li
-                    key={p.id}
-                    className="flex items-center gap-2 py-2.5"
-                  >
+                  <li key={p.id} className="flex items-center gap-2 py-2.5">
                     <span className="min-w-0 flex-1 truncate">
                       @{nameOf.get(p.profile_id) ?? "—"} ·{" "}
                       {p.tier === "pro" ? "โปร" : "อีลิท"} {p.days} วัน
@@ -131,25 +154,26 @@ export default async function AdminOverviewPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>โดเนทล่าสุด (ทั้งระบบ)</CardTitle>
+            <CardTitle>สมาชิกใหม่ล่าสุด (ทั้งระบบ)</CardTitle>
           </CardHeader>
           <CardContent>
-            {(donations ?? []).length === 0 ? (
+            {(memPays ?? []).length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">
                 ยังไม่มีรายการ
               </p>
             ) : (
               <ul className="divide-y divide-border/60 text-sm">
-                {(donations ?? []).map((d) => (
-                  <li key={d.id} className="flex items-center gap-2 py-2.5">
+                {(memPays ?? []).map((m) => (
+                  <li key={m.id} className="flex items-center gap-2 py-2.5">
                     <span className="min-w-0 flex-1 truncate">
-                      {d.donor_name} → @{nameOf.get(d.profile_id) ?? "—"}
+                      {m.member_name} → @{nameOf.get(m.streamer_id) ?? "—"} ·{" "}
+                      {m.tier_name}
                     </span>
                     <span className="font-display font-bold text-primary">
-                      {formatTHB(Number(d.verified_amount ?? d.amount))}
+                      {formatTHB(Number(m.amount))}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {timeAgo(d.created_at)}
+                      {timeAgo(m.created_at)}
                     </span>
                   </li>
                 ))}
@@ -158,6 +182,35 @@ export default async function AdminOverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>โดเนทล่าสุด (ทั้งระบบ)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {(donations ?? []).length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              ยังไม่มีรายการ
+            </p>
+          ) : (
+            <ul className="divide-y divide-border/60 text-sm">
+              {(donations ?? []).map((d) => (
+                <li key={d.id} className="flex items-center gap-2 py-2.5">
+                  <span className="min-w-0 flex-1 truncate">
+                    {d.donor_name} → @{nameOf.get(d.profile_id) ?? "—"}
+                  </span>
+                  <span className="font-display font-bold text-primary">
+                    {formatTHB(Number(d.verified_amount ?? d.amount))}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {timeAgo(d.created_at)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

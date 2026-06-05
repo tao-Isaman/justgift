@@ -64,6 +64,7 @@ export const alertSettingsSchema = z.object({
   ttsVolume: z.number().min(0).max(1),
   bigThreshold: z.number().min(0).max(1_000_000),
   bigEffect: z.boolean(),
+  memberAlert: z.boolean(),
   goalEnabled: z.boolean(),
   goalTitle: z.string().trim().max(60),
   goalAmount: z.number().min(0).max(100_000_000),
@@ -83,3 +84,49 @@ export const alertSettingsSchema = z.object({
 });
 
 export type AlertSettingsValues = z.infer<typeof alertSettingsSchema>;
+
+/** Streamer profile + public-page customization (dashboard settings). */
+export const profileSettingsSchema = z
+  .object({
+    displayName: z.string().trim().min(2, "อย่างน้อย 2 ตัวอักษร").max(40),
+    bio: z.string().trim().max(300, "ไม่เกิน 300 ตัวอักษร"),
+    bannerUrl: httpUrlOrEmpty,
+    accentColor: z
+      .string()
+      .regex(/^#[0-9a-fA-F]{6}$/, "สีไม่ถูกต้อง")
+      .or(z.literal("")),
+    socials: z.object({
+      instagram: z.string().trim().max(200),
+      x: z.string().trim().max(200),
+      youtube: z.string().trim().max(200),
+      tiktok: z.string().trim().max(200),
+      discord: z.string().trim().max(200),
+      website: z.string().trim().max(200),
+    }),
+    suggestedAmounts: z
+      .array(z.number().int().positive().max(1_000_000))
+      .max(6, "ไม่เกิน 6 จำนวน"),
+    showGoal: z.boolean(),
+    showLeaderboard: z.boolean(),
+    receiverName: z.string().trim().min(2, "กรอกชื่อบนบัญชีของคุณ").max(80),
+    promptpayId: z.string().trim().max(40),
+    bankName: z.string().trim().max(40),
+    bankAccount: z.string().trim().max(40),
+  })
+  .refine((v) => !!v.promptpayId || (!!v.bankName && !!v.bankAccount), {
+    message: "เพิ่มพร้อมเพย์ หรือธนาคารพร้อมเลขที่บัญชี",
+    path: ["promptpayId"],
+  });
+
+export type ProfileSettingsValues = z.infer<typeof profileSettingsSchema>;
+
+/** Streamer-defined membership tier (dashboard). */
+export const membershipTierSchema = z.object({
+  name: z.string().trim().min(2, "ตั้งชื่อระดับ").max(40),
+  price: z.number().positive("กรอกราคา").max(1_000_000),
+  days: z.number().int().min(1).max(3650),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "สีไม่ถูกต้อง"),
+  perks: z.array(z.string().trim().max(80)).max(8),
+});
+
+export type MembershipTierValues = z.infer<typeof membershipTierSchema>;

@@ -102,6 +102,7 @@ export function AlertSettingsForm({
       ttsVolume: Number(settings?.tts_volume ?? 1),
       bigThreshold: Number(settings?.big_threshold ?? 500),
       bigEffect: settings?.big_effect ?? true,
+      memberAlert: settings?.member_alert ?? false,
       goalEnabled: settings?.goal_enabled ?? false,
       goalTitle: settings?.goal_title ?? "",
       goalAmount: Number(settings?.goal_amount ?? 0),
@@ -469,6 +470,26 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
+        </Section>
+
+        {/* Members — all plans */}
+        <Section title="สมาชิก">
+          <Row label="แจ้งเตือนเมื่อมีสมาชิกใหม่ขึ้นจอ">
+            <Controller
+              control={control}
+              name="memberAlert"
+              render={({ field }) => (
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={(c) => field.onChange(c)}
+                />
+              )}
+            />
+          </Row>
+          <p className="text-xs text-muted-foreground">
+            เมื่อมีคนสมัครเป็นสมาชิกผ่านเพจ จะเด้งแจ้งเตือนบน overlay
+            เหมือนการโดเนท
+          </p>
         </Section>
 
         {/* Donation goal — Elite */}

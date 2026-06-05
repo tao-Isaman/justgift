@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink, Shield } from "lucide-react";
+import { ExternalLink, Heart, Shield } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
@@ -54,6 +54,12 @@ export default async function AppLayout({
               <Shield className="size-4" /> แอดมิน
             </Link>
           ) : null}
+          <Link
+            href="/memberships"
+            className="flex items-center gap-2 px-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Heart className="size-4" /> สมาชิกที่ฉันร่วม
+          </Link>
           <Link
             href={`/${profile.username}`}
             target="_blank"

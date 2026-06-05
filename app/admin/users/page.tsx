@@ -79,7 +79,8 @@ export default async function AdminUsersPage({
                       <p className="mt-0.5 text-xs text-muted-foreground">
                         {u.display_name ?? "—"} ·{" "}
                         {formatNumber(Number(u.donations_count))} โดเนท ·{" "}
-                        {formatTHB(Number(u.total_raised))} · สมัคร{" "}
+                        {formatTHB(Number(u.total_raised))} ·{" "}
+                        {formatNumber(Number(u.member_count))} สมาชิก · สมัคร{" "}
                         {timeAgo(u.created_at)}
                         {plan !== "free" && left !== null
                           ? ` · เหลือ ${left} วัน`

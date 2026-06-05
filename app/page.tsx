@@ -31,7 +31,7 @@ const STEPS = [
   {
     icon: ScanLine,
     title: "ระบบตรวจสลิปให้อัตโนมัติ",
-    body: "JustGift ตรวจสลิปกับธนาคารผ่าน slip.rdcw.co.th ว่าจ่ายจริง ถูกบัญชี ยอดตรง และใช้ได้ครั้งเดียว",
+    body: "Just Donate ตรวจสลิปกับธนาคารผ่าน slip.rdcw.co.th ว่าจ่ายจริง ถูกบัญชี ยอดตรง และใช้ได้ครั้งเดียว",
   },
   {
     icon: Bell,
@@ -78,14 +78,14 @@ export default function LandingPage() {
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "JustGift",
+      name: "Just Donate",
       url: SITE.url,
       inLanguage: "th-TH",
     },
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: "JustGift",
+      name: "Just Donate",
       applicationCategory: "WebApplication",
       operatingSystem: "Web",
       inLanguage: "th-TH",
@@ -133,7 +133,7 @@ export default function LandingPage() {
                 </span>
               </h1>
               <p className="mt-6 max-w-md text-lg text-muted-foreground">
-                ผู้ชมโอนเงินแล้วอัปโหลดสลิป JustGift
+                ผู้ชมโอนเงินแล้วอัปโหลดสลิป Just Donate
                 ตรวจสอบกับธนาคารแล้วแจ้งเตือนโดเนทขึ้นจอสตรีมภายในไม่กี่วินาที
                 เงินเข้าบัญชีคุณโดยตรง
               </p>

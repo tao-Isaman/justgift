@@ -2,12 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, CreditCard, LayoutDashboard, Settings } from "lucide-react";
+import {
+  Bell,
+  CreditCard,
+  LayoutDashboard,
+  Settings,
+  Users,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/dashboard", label: "ภาพรวม", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/alerts", label: "การแจ้งเตือน", icon: Bell },
+  { href: "/dashboard/members", label: "สมาชิก", icon: Users },
   { href: "/dashboard/settings", label: "ตั้งค่า", icon: Settings },
   { href: "/dashboard/billing", label: "การเรียกเก็บเงิน", icon: CreditCard },
 ];

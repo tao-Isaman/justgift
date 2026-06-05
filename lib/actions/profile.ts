@@ -3,7 +3,12 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { onboardingSchema, type OnboardingValues } from "@/lib/validations";
+import {
+  onboardingSchema,
+  profileSettingsSchema,
+  type OnboardingValues,
+  type ProfileSettingsValues,
+} from "@/lib/validations";
 
 export async function saveOnboarding(
   raw: OnboardingValues
@@ -42,4 +47,51 @@ export async function saveOnboarding(
 
   revalidatePath("/dashboard");
   redirect("/dashboard");
+}
+
+export async function updateProfile(
+  raw: ProfileSettingsValues
+): Promise<{ error?: string; ok?: boolean }> {
+  const parsed = profileSettingsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "ข้อมูลไม่ถูกต้อง" };
+  }
+  const v = parsed.data;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "ยังไม่ได้เข้าสู่ระบบ" };
+
+  // Drop empty social entries so the jsonb stays tidy.
+  const socials: Record<string, string> = {};
+  for (const [k, val] of Object.entries(v.socials)) {
+    const t = (val ?? "").trim();
+    if (t) socials[k] = t;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      display_name: v.displayName,
+      bio: v.bio || null,
+      banner_url: v.bannerUrl || null,
+      accent_color: v.accentColor || null,
+      socials,
+      suggested_amounts: v.suggestedAmounts,
+      show_goal: v.showGoal,
+      show_leaderboard: v.showLeaderboard,
+      receiver_name: v.receiverName,
+      promptpay_id: v.promptpayId || null,
+      bank_name: v.bankName || null,
+      bank_account: v.bankAccount || null,
+    })
+    .eq("id", user.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard");
+  return { ok: true };
 }

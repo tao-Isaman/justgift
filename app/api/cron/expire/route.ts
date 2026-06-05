@@ -4,7 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Daily job (see vercel.json crons): downgrade lapsed subscriptions to free.
+// Daily job (see vercel.json crons): downgrade lapsed SaaS subscriptions to
+// free, and mark lapsed viewer memberships as expired.
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
   if (secret) {
@@ -19,5 +20,14 @@ export async function GET(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ expired: data ?? 0 });
+  const { data: memExpired, error: memErr } = await admin.rpc(
+    "expire_memberships"
+  );
+  if (memErr) {
+    return NextResponse.json({ error: memErr.message }, { status: 500 });
+  }
+  return NextResponse.json({
+    expired: data ?? 0,
+    memberships_expired: memExpired ?? 0,
+  });
 }

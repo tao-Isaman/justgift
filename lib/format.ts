@@ -34,3 +34,9 @@ export function daysUntil(date: string | Date | null): number | null {
     Math.ceil((new Date(date).getTime() - Date.now()) / 86_400_000)
   );
 }
+
+/** True if `date` is still in the future (e.g. an active membership period). */
+export function isFuture(date: string | Date | null): boolean {
+  if (!date) return false;
+  return new Date(date).getTime() > Date.now();
+}

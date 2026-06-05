@@ -30,7 +30,7 @@ export async function createCheckout(
             currency: "thb",
             unit_amount: Math.round(pkg.price * 100), // satang
             product_data: {
-              name: `JustGift ${pkg.tier.toUpperCase()} — ${pkg.label}`,
+              name: `Just Donate ${pkg.tier.toUpperCase()} — ${pkg.label}`,
             },
           },
         },

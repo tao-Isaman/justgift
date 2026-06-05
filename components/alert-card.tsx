@@ -87,7 +87,7 @@ export function AlertCard({
       ) : null}
       {watermark ? (
         <span className="absolute right-2 bottom-1 font-mono text-[10px] tracking-wide text-muted-foreground/60">
-          justgift.app
+          Just Donate
         </span>
       ) : null}
     </div>

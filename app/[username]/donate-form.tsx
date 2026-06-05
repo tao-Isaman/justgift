@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -37,6 +37,8 @@ import { decodeSlipQr } from "@/lib/qr";
 import { submitDonation } from "@/lib/actions/donate";
 import { parseYouTubeId } from "@/lib/media";
 import { THAI_BANKS } from "@/lib/constants";
+import { formatTHB } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   donorName: z.string().trim().min(1, "กรอกชื่อ").max(40),
@@ -63,6 +65,7 @@ export function DonateForm({
   bankAccount,
   mediaEnabled,
   mediaMin,
+  suggestedAmounts = [],
 }: {
   username: string;
   displayName: string;
@@ -71,6 +74,7 @@ export function DonateForm({
   bankAccount: string | null;
   mediaEnabled: boolean;
   mediaMin: number;
+  suggestedAmounts?: number[];
 }) {
   const [pending, startTransition] = useTransition();
   const [file, setFile] = useState<File | null>(null);
@@ -82,6 +86,7 @@ export function DonateForm({
     resolver: zodResolver(formSchema),
     defaultValues: { donorName: "", message: "", amount: "", mediaUrl: "" },
   });
+  const amountValue = useWatch({ control: form.control, name: "amount" });
 
   const bankLabel =
     THAI_BANKS.find((b) => b.value === bankName)?.label ?? bankName;
@@ -251,6 +256,31 @@ export function DonateForm({
                 )}
               />
             </div>
+
+            {suggestedAmounts.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {suggestedAmounts.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() =>
+                      form.setValue("amount", String(n), {
+                        shouldValidate: true,
+                      })
+                    }
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-sm font-medium transition-colors",
+                      amountValue === String(n)
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border/60 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    )}
+                  >
+                    {formatTHB(n)}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
             <FormField
               control={form.control}
               name="message"

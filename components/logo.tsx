@@ -21,7 +21,7 @@ export function Logo({
       </span>
       {showText && (
         <span className="font-display text-lg font-bold tracking-[0.18em]">
-          JUST<span className="text-primary text-glow">GIFT</span>
+          JUST <span className="text-primary text-glow">DONATE</span>
         </span>
       )}
     </Link>

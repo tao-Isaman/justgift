@@ -40,6 +40,7 @@ export async function updateAlertSettings(
       tts_volume: v.ttsVolume,
       big_threshold: v.bigThreshold,
       big_effect: v.bigEffect,
+      member_alert: v.memberAlert,
       goal_enabled: v.goalEnabled,
       goal_amount: v.goalAmount,
       goal_title: v.goalTitle || null,

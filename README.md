@@ -1,9 +1,9 @@
-# JustGift 🎁
+# Just Donate 🎁
 
 Verified donation alerts for Thai streamers. Donors transfer money and upload their
-bank slip; JustGift verifies the slip against the bank via
+bank slip; Just Donate verifies the slip against the bank via
 [slip.rdcw.co.th](https://slip.rdcw.co.th) and fires a real-time alert on the
-streamer's OBS overlay. Money goes **directly to the streamer** — JustGift never
+streamer's OBS overlay. Money goes **directly to the streamer** — Just Donate never
 holds funds.
 
 > Black / red esport theme · Next.js 16 · TypeScript · Bun · shadcn (Base UI) · Supabase
@@ -176,6 +176,24 @@ where you can **grant a package for free** (a ฿0 `method='admin'` comp that
 reuses `apply_subscription`) or revoke a streamer to Free. Admin reads use the
 service-role client after verifying the caller, so RLS isn't in the way.
 
+## Memberships
+
+Viewers can become **members** of a streamer — same **verify-only** model as
+donations (the money goes straight to the streamer, no custody). Streamers define
+their own **tiers** (name, price, duration, perks, colour) under
+**`/dashboard/members`**; viewers sign in with Google, transfer the tier price to
+the streamer's PromptPay/bank, and upload a slip. RDCW verifies it (right account,
+amount ≥ tier price, fresh, not reused across donations *or* memberships) and
+`grant_membership` opens/extends the period (same-tier renewals stack). Because
+PromptPay can't auto-renew, memberships are **prepaid periods** the member re-buys
+from their **`/memberships`** page. Streamers see their members live; admins see
+platform-wide member counts + revenue. An optional on-stream "new member" alert
+reuses the overlay broadcast.
+
+The public page (`/[username]`) is also customizable from **`/dashboard/settings`**:
+banner, theme colour, bio, social links, quick-donate amounts, and goal/leaderboard
+visibility.
+
 ## Security & anti-fraud
 
 - **Verify-only money flow** — donors pay the streamer directly; the platform never
@@ -193,9 +211,8 @@ service-role client after verifying the caller, so RLS isn't in the way.
 
 ## Roadmap
 
-- Settings screen (edit profile / payout) — `/dashboard/settings` is still a stub.
-- Subscription billing (plan gating is wired in `lib/constants.ts`).
-- Donation goals, leaderboards, media share.
+- Banner/avatar uploads (today the banner is a pasted image URL, like alert images).
+- Per-tier member perks enforcement (badges in alerts/leaderboard, member-only media).
 - Confirm the exact RDCW response shape against your account and tighten
   `lib/rdcw.ts` types if needed.
 

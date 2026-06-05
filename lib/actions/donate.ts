@@ -2,7 +2,8 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { broadcastToOverlay } from "@/lib/supabase/broadcast";
-import { inquireSlip, parseTransTimestamp, type RdcwData } from "@/lib/rdcw";
+import { inquireSlip, parseTransTimestamp } from "@/lib/rdcw";
+import { MAX_SLIP_AGE_MS, receiverMatches } from "@/lib/slip-verify";
 import { donationSchema } from "@/lib/validations";
 import { PLAN_DONATION_LIMIT, effectivePlan } from "@/lib/constants";
 import { parseYouTubeId, youTubeEmbedUrl } from "@/lib/media";
@@ -19,58 +20,6 @@ export type SubmitDonationInput = {
 };
 
 export type SubmitDonationResult = { ok?: true; amount?: number; error?: string };
-
-const MAX_SLIP_AGE_MS = 24 * 60 * 60 * 1000;
-
-function digitsTail(value: string | null | undefined, n = 4): string {
-  return (value ?? "").replace(/\D/g, "").slice(-n);
-}
-
-/**
- * Verify that the slip was actually paid to THIS streamer's PromptPay number or
- * bank account. Thai slips mask the receiver to the last 4 digits, so we compare
- * those. When the slip exposes account digits, the match is decided strictly by
- * them; the receiver name is only a fallback when no digits are available.
- * Fails closed when there's no usable signal.
- */
-function receiverMatches(
-  profile: {
-    receiver_name: string | null;
-    promptpay_id: string | null;
-    bank_account: string | null;
-  },
-  data: RdcwData
-): boolean {
-  const recv = data.receiver ?? {};
-
-  // Last-4 visible on the slip for the receiving bank account / PromptPay proxy.
-  const slipTails = [recv.account?.value, recv.proxy?.value]
-    .map((v) => digitsTail(v))
-    .filter((t) => t.length === 4);
-
-  // Last-4 of the streamer's registered bank account / PromptPay number.
-  const targetTails = [profile.bank_account, profile.promptpay_id]
-    .map((v) => digitsTail(v))
-    .filter((t) => t.length === 4);
-
-  // Decisive when both sides expose account digits: the money must have landed
-  // on the streamer's registered PromptPay/account.
-  if (slipTails.length && targetTails.length) {
-    return slipTails.some((s) => targetTails.includes(s));
-  }
-
-  // Fallback: slip masked everything but the name — use it as a weak signal.
-  const slipName = (recv.displayName || recv.name || "").toLowerCase();
-  if (profile.receiver_name && slipName) {
-    const tokens = profile.receiver_name
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((t) => t.length >= 3);
-    if (tokens.some((t) => slipName.includes(t))) return true;
-  }
-
-  return false;
-}
 
 export async function submitDonation(
   input: SubmitDonationInput

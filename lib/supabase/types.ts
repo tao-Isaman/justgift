@@ -14,6 +14,7 @@ export type AlertPosition =
   | "top-right"
   | "center";
 export type DonationStatus = "pending" | "verified" | "rejected" | "shown";
+export type MembershipStatus = "active" | "expired";
 
 export type Database = {
   public: {
@@ -34,6 +35,12 @@ export type Database = {
           onboarded: boolean;
           plan_expires_at: string | null;
           is_admin: boolean;
+          banner_url: string | null;
+          accent_color: string | null;
+          socials: Json;
+          suggested_amounts: number[];
+          show_goal: boolean;
+          show_leaderboard: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -52,6 +59,12 @@ export type Database = {
           onboarded?: boolean;
           plan_expires_at?: string | null;
           is_admin?: boolean;
+          banner_url?: string | null;
+          accent_color?: string | null;
+          socials?: Json;
+          suggested_amounts?: number[];
+          show_goal?: boolean;
+          show_leaderboard?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -70,6 +83,12 @@ export type Database = {
           onboarded?: boolean;
           plan_expires_at?: string | null;
           is_admin?: boolean;
+          banner_url?: string | null;
+          accent_color?: string | null;
+          socials?: Json;
+          suggested_amounts?: number[];
+          show_goal?: boolean;
+          show_leaderboard?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -101,6 +120,7 @@ export type Database = {
           media_min_amount: number;
           media_max_seconds: number;
           variants: Json;
+          member_alert: boolean;
           updated_at: string;
         };
         Insert: {
@@ -128,6 +148,7 @@ export type Database = {
           media_min_amount?: number;
           media_max_seconds?: number;
           variants?: Json;
+          member_alert?: boolean;
           updated_at?: string;
         };
         Update: {
@@ -155,6 +176,7 @@ export type Database = {
           media_min_amount?: number;
           media_max_seconds?: number;
           variants?: Json;
+          member_alert?: boolean;
           updated_at?: string;
         };
         Relationships: [];
@@ -248,6 +270,129 @@ export type Database = {
         };
         Relationships: [];
       };
+      membership_tiers: {
+        Row: {
+          id: string;
+          streamer_id: string;
+          name: string;
+          price: number;
+          days: number;
+          perks: string[];
+          color: string;
+          sort: number;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          streamer_id: string;
+          name: string;
+          price: number;
+          days?: number;
+          perks?: string[];
+          color?: string;
+          sort?: number;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          price?: number;
+          days?: number;
+          perks?: string[];
+          color?: string;
+          sort?: number;
+          active?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      memberships: {
+        Row: {
+          id: string;
+          streamer_id: string;
+          member_id: string;
+          member_name: string;
+          tier_id: string | null;
+          tier_name: string;
+          status: MembershipStatus;
+          period_start: string;
+          period_end: string;
+          total_paid: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          streamer_id: string;
+          member_id: string;
+          member_name: string;
+          tier_id?: string | null;
+          tier_name: string;
+          status?: MembershipStatus;
+          period_start?: string;
+          period_end: string;
+          total_paid?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          status?: MembershipStatus;
+          tier_id?: string | null;
+          tier_name?: string;
+          period_end?: string;
+          total_paid?: number;
+        };
+        Relationships: [];
+      };
+      membership_payments: {
+        Row: {
+          id: string;
+          streamer_id: string;
+          member_id: string | null;
+          membership_id: string | null;
+          tier_id: string | null;
+          tier_name: string;
+          member_name: string;
+          amount: number;
+          days: number;
+          currency: string;
+          status: string;
+          slip_trans_ref: string | null;
+          sender_name: string | null;
+          sender_bank: string | null;
+          receiver_account: string | null;
+          slip_image_path: string | null;
+          slip_data: Json | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          streamer_id: string;
+          member_id?: string | null;
+          membership_id?: string | null;
+          tier_id?: string | null;
+          tier_name: string;
+          member_name: string;
+          amount: number;
+          days: number;
+          currency?: string;
+          status?: string;
+          slip_trans_ref?: string | null;
+          sender_name?: string | null;
+          sender_bank?: string | null;
+          receiver_account?: string | null;
+          slip_image_path?: string | null;
+          slip_data?: Json | null;
+          created_at?: string;
+        };
+        Update: {
+          status?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       public_profiles: {
@@ -257,6 +402,12 @@ export type Database = {
           display_name: string | null;
           avatar_url: string | null;
           bio: string | null;
+          banner_url: string | null;
+          accent_color: string | null;
+          socials: Json;
+          suggested_amounts: number[];
+          show_goal: boolean;
+          show_leaderboard: boolean;
           promptpay_id: string | null;
           bank_name: string | null;
           bank_account: string | null;
@@ -302,6 +453,10 @@ export type Database = {
           month_donations_total: number;
           sub_revenue: number;
           month_sub_revenue: number;
+          members_count: number;
+          active_members: number;
+          membership_revenue: number;
+          month_membership_revenue: number;
         }[];
       };
       admin_users: {
@@ -316,7 +471,62 @@ export type Database = {
           is_admin: boolean;
           donations_count: number;
           total_raised: number;
+          member_count: number;
+          membership_revenue: number;
         }[];
+      };
+      my_member_stats: {
+        Args: Record<string, never>;
+        Returns: {
+          member_count: number;
+          active_count: number;
+          total_revenue: number;
+          month_revenue: number;
+        }[];
+      };
+      my_memberships: {
+        Args: Record<string, never>;
+        Returns: {
+          id: string;
+          streamer_id: string;
+          streamer_username: string | null;
+          streamer_display_name: string | null;
+          streamer_avatar_url: string | null;
+          tier_name: string;
+          status: MembershipStatus;
+          period_start: string;
+          period_end: string;
+          total_paid: number;
+        }[];
+      };
+      public_top_donors: {
+        Args: { p_username: string; p_limit?: number };
+        Returns: { donor_name: string; total: number; donations: number }[];
+      };
+      public_goal: {
+        Args: { p_username: string };
+        Returns: {
+          enabled: boolean;
+          title: string | null;
+          target: number;
+          raised: number;
+        }[];
+      };
+      grant_membership: {
+        Args: {
+          p_streamer: string;
+          p_member: string;
+          p_member_name: string;
+          p_tier: string;
+          p_tier_name: string;
+          p_days: number;
+          p_amount: number;
+        };
+        Returns: string;
+      };
+      expire_memberships: {
+        Args: Record<string, never>;
+        Returns: number;
       };
     };
     Enums: Record<string, never>;
@@ -343,6 +553,27 @@ export type SubscriptionPayment =
   Database["public"]["Tables"]["subscription_payments"]["Row"];
 export type PublicProfile =
   Database["public"]["Views"]["public_profiles"]["Row"];
+
+export type MembershipTier =
+  Database["public"]["Tables"]["membership_tiers"]["Row"];
+export type Membership = Database["public"]["Tables"]["memberships"]["Row"];
+export type MembershipPayment =
+  Database["public"]["Tables"]["membership_payments"]["Row"];
+
+/** Streamer social links (stored as profiles.socials jsonb). */
+export type Socials = {
+  instagram?: string;
+  x?: string;
+  youtube?: string;
+  tiktok?: string;
+  discord?: string;
+  facebook?: string;
+  website?: string;
+};
+
+/** Membership the calling viewer holds (from my_memberships RPC). */
+export type MyMembership =
+  Database["public"]["Functions"]["my_memberships"]["Returns"][number];
 
 /** Payload broadcast to the OBS overlay channel `overlay:<token>`. */
 export type OverlayAlertPayload = {

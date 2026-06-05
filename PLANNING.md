@@ -1,4 +1,4 @@
-# JustGift — Project Plan
+# Just Donate — Project Plan
 
 > Donation alert platform for Thai streamers. Donors transfer money + upload a slip;
 > we verify the slip and fire a real-time alert on the streamer's stream overlay.
