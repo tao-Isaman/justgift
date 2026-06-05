@@ -79,6 +79,8 @@ export default async function DonatePage({
             promptpayId={profile.promptpay_id}
             bankName={profile.bank_name}
             bankAccount={profile.bank_account}
+            mediaEnabled={profile.media_enabled}
+            mediaMin={Number(profile.media_min_amount)}
           />
         </div>
 

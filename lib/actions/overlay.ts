@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { broadcastToOverlay } from "@/lib/supabase/broadcast";
+import { broadcastToOverlay, broadcastSkip } from "@/lib/supabase/broadcast";
 
 export async function sendTestAlert(input?: {
   amount?: number;
@@ -51,3 +51,29 @@ export async function sendTestAlert(input?: {
     };
   }
 }
+
+export async function skipOverlayMedia(): Promise<{
+  error?: string;
+  ok?: boolean;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "ยังไม่ได้เข้าสู่ระบบ" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("overlay_token")
+    .eq("id", user.id)
+    .single();
+  if (!profile) return { error: "ไม่พบโปรไฟล์" };
+
+  try {
+    await broadcastSkip(profile.overlay_token);
+    return { ok: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "ข้ามมีเดียไม่สำเร็จ" };
+  }
+}
+

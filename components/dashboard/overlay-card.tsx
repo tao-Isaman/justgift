@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import Link from "next/link";
-import { ExternalLink, Loader2, Play } from "lucide-react";
+import { ExternalLink, Loader2, Play, SkipForward } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
@@ -14,7 +14,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CopyButton } from "@/components/dashboard/copy-button";
-import { sendTestAlert } from "@/lib/actions/overlay";
+import { sendTestAlert, skipOverlayMedia } from "@/lib/actions/overlay";
 import { cn } from "@/lib/utils";
 
 const readonlyInput =
@@ -28,12 +28,21 @@ export function OverlayCard({
   pageUrl: string;
 }) {
   const [pending, startTransition] = useTransition();
+  const [skipping, startSkip] = useTransition();
 
   function test() {
     startTransition(async () => {
       const res = await sendTestAlert();
       if (res?.error) toast.error(res.error);
       else toast.success("ส่งการแจ้งเตือนทดสอบไปที่ overlay แล้ว");
+    });
+  }
+
+  function skip() {
+    startSkip(async () => {
+      const res = await skipOverlayMedia();
+      if (res?.error) toast.error(res.error);
+      else toast.success("ข้ามมีเดียแล้ว");
     });
   }
 
@@ -68,6 +77,19 @@ export function OverlayCard({
               <Play className="size-4" />
             )}
             ทดสอบการแจ้งเตือน
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={skip}
+            disabled={skipping}
+          >
+            {skipping ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <SkipForward className="size-4" />
+            )}
+            ข้ามมีเดีย
           </Button>
           <a
             href={overlayUrl}

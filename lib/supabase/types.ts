@@ -91,6 +91,13 @@ export type Database = {
           tts_volume: number;
           big_threshold: number;
           big_effect: boolean;
+          goal_enabled: boolean;
+          goal_amount: number;
+          goal_title: string | null;
+          media_enabled: boolean;
+          media_min_amount: number;
+          media_max_seconds: number;
+          variants: Json;
           updated_at: string;
         };
         Insert: {
@@ -111,6 +118,13 @@ export type Database = {
           tts_volume?: number;
           big_threshold?: number;
           big_effect?: boolean;
+          goal_enabled?: boolean;
+          goal_amount?: number;
+          goal_title?: string | null;
+          media_enabled?: boolean;
+          media_min_amount?: number;
+          media_max_seconds?: number;
+          variants?: Json;
           updated_at?: string;
         };
         Update: {
@@ -131,6 +145,13 @@ export type Database = {
           tts_volume?: number;
           big_threshold?: number;
           big_effect?: boolean;
+          goal_enabled?: boolean;
+          goal_amount?: number;
+          goal_title?: string | null;
+          media_enabled?: boolean;
+          media_min_amount?: number;
+          media_max_seconds?: number;
+          variants?: Json;
           updated_at?: string;
         };
         Relationships: [];
@@ -154,6 +175,7 @@ export type Database = {
           reject_reason: string | null;
           created_at: string;
           shown_at: string | null;
+          media_url: string | null;
         };
         Insert: {
           id?: string;
@@ -173,6 +195,7 @@ export type Database = {
           reject_reason?: string | null;
           created_at?: string;
           shown_at?: string | null;
+          media_url?: string | null;
         };
         Update: {
           status?: DonationStatus;
@@ -235,6 +258,8 @@ export type Database = {
           bank_name: string | null;
           bank_account: string | null;
           plan: Plan;
+          media_enabled: boolean;
+          media_min_amount: number;
         };
         Relationships: [];
       };
@@ -246,7 +271,12 @@ export type Database = {
           total: number;
           donation_count: number;
           month_total: number;
+          month_count: number;
         }[];
+      };
+      my_top_donors: {
+        Args: { p_limit?: number };
+        Returns: { donor_name: string; total: number; donations: number }[];
       };
       apply_subscription: {
         Args: { p_profile: string; p_tier: string; p_days: number };
@@ -268,6 +298,14 @@ export type AlertSettings =
   Database["public"]["Tables"]["alert_settings"]["Row"];
 export type AlertSettingsUpdate =
   Database["public"]["Tables"]["alert_settings"]["Update"];
+
+/** Amount-tier alert variant (stored as JSON on alert_settings.variants). */
+export type AlertVariant = {
+  minAmount: number;
+  accentColor: string;
+  imageUrl: string;
+  animation: AlertAnimation;
+};
 export type Donation = Database["public"]["Tables"]["donations"]["Row"];
 export type SubscriptionPayment =
   Database["public"]["Tables"]["subscription_payments"]["Row"];
@@ -288,5 +326,8 @@ export type OverlayAlertPayload = {
   ttsVoice?: string | null;
   animation?: AlertAnimation;
   position?: AlertPosition;
+  soundUrl?: string | null;
+  mediaUrl?: string | null;
+  mediaSeconds?: number;
   test?: boolean;
 };

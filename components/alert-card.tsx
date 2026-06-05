@@ -10,6 +10,7 @@ export type AlertCardProps = {
   textColor?: string;
   imageUrl?: string | null;
   watermark?: boolean;
+  fontFamily?: string;
   className?: string;
 };
 
@@ -25,6 +26,7 @@ export function AlertCard({
   textColor = "#ffffff",
   imageUrl,
   watermark = false,
+  fontFamily,
   className,
 }: AlertCardProps) {
   return (
@@ -60,7 +62,7 @@ export function AlertCard({
         <div className="min-w-0">
           <p
             className="font-heading text-lg leading-tight"
-            style={{ color: textColor }}
+            style={{ color: textColor, fontFamily }}
           >
             <span className="font-bold" style={{ color: accentColor }}>
               {donorName}
@@ -78,7 +80,7 @@ export function AlertCard({
       {message ? (
         <p
           className="mt-3 line-clamp-3 text-sm leading-relaxed"
-          style={{ color: textColor }}
+          style={{ color: textColor, fontFamily }}
         >
           {message}
         </p>

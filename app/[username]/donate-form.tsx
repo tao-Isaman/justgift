@@ -35,6 +35,7 @@ import { AlertCard } from "@/components/alert-card";
 import { createClient } from "@/lib/supabase/client";
 import { decodeSlipQr } from "@/lib/qr";
 import { submitDonation } from "@/lib/actions/donate";
+import { parseYouTubeId } from "@/lib/media";
 import { THAI_BANKS } from "@/lib/constants";
 
 const formSchema = z.object({
@@ -47,6 +48,7 @@ const formSchema = z.object({
       const n = Number(v);
       return Number.isFinite(n) && n > 0 && n <= 1_000_000;
     }, "กรอกจำนวนเงินให้ถูกต้อง"),
+  mediaUrl: z.string().trim().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -59,12 +61,16 @@ export function DonateForm({
   promptpayId,
   bankName,
   bankAccount,
+  mediaEnabled,
+  mediaMin,
 }: {
   username: string;
   displayName: string;
   promptpayId: string | null;
   bankName: string | null;
   bankAccount: string | null;
+  mediaEnabled: boolean;
+  mediaMin: number;
 }) {
   const [pending, startTransition] = useTransition();
   const [file, setFile] = useState<File | null>(null);
@@ -74,7 +80,7 @@ export function DonateForm({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { donorName: "", message: "", amount: "" },
+    defaultValues: { donorName: "", message: "", amount: "", mediaUrl: "" },
   });
 
   const bankLabel =
@@ -89,6 +95,10 @@ export function DonateForm({
   function onSubmit(values: FormValues) {
     if (!file) {
       toast.error("กรุณาแนบสลิปโอนเงิน");
+      return;
+    }
+    if (mediaEnabled && values.mediaUrl && !parseYouTubeId(values.mediaUrl)) {
+      toast.error("ลิงก์ YouTube ไม่ถูกต้อง");
       return;
     }
     startTransition(async () => {
@@ -121,6 +131,7 @@ export function DonateForm({
         amount: Number(values.amount),
         payload,
         slipImagePath,
+        mediaUrl: mediaEnabled ? values.mediaUrl : undefined,
       });
 
       if (res.error) {
@@ -257,6 +268,25 @@ export function DonateForm({
                 </FormItem>
               )}
             />
+
+            {mediaEnabled ? (
+              <FormField
+                control={form.control}
+                name="mediaUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>แนบคลิป YouTube (ไม่บังคับ)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://youtu.be/…" {...field} />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">
+                      เล่นบนสตรีมเมื่อโดเนทตั้งแต่ ฿{mediaMin} ขึ้นไป
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
 
             <p className="pt-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
               3 · อัปโหลดสลิป

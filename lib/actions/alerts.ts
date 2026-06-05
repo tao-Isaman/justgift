@@ -30,6 +30,7 @@ export async function updateAlertSettings(
       duration_ms: v.durationMs,
       accent_color: v.accentColor,
       text_color: v.textColor,
+      font: v.font,
       min_amount: v.minAmount,
       sound_url: v.soundUrl || null,
       sound_volume: v.soundVolume,
@@ -40,6 +41,13 @@ export async function updateAlertSettings(
       tts_volume: v.ttsVolume,
       big_threshold: v.bigThreshold,
       big_effect: v.bigEffect,
+      goal_enabled: v.goalEnabled,
+      goal_amount: v.goalAmount,
+      goal_title: v.goalTitle || null,
+      media_enabled: v.mediaEnabled,
+      media_min_amount: v.mediaMinAmount,
+      media_max_seconds: v.mediaMaxSeconds,
+      variants: v.variants,
     })
     .eq("profile_id", user.id);
 

@@ -4,7 +4,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { broadcastToOverlay } from "@/lib/supabase/broadcast";
 import { inquireSlip, parseTransTimestamp, type RdcwData } from "@/lib/rdcw";
 import { donationSchema } from "@/lib/validations";
-import type { Json } from "@/lib/supabase/types";
+import { PLAN_DONATION_LIMIT, effectivePlan } from "@/lib/constants";
+import { parseYouTubeId, youTubeEmbedUrl } from "@/lib/media";
+import type { AlertVariant, Json } from "@/lib/supabase/types";
 
 export type SubmitDonationInput = {
   username: string;
@@ -13,6 +15,7 @@ export type SubmitDonationInput = {
   amount: number;
   payload: string; // QR payload decoded client-side
   slipImagePath?: string;
+  mediaUrl?: string;
 };
 
 export type SubmitDonationResult = { ok?: true; amount?: number; error?: string };
@@ -90,7 +93,9 @@ export async function submitDonation(
 
   const { data: profile } = await admin
     .from("profiles")
-    .select("id, overlay_token, receiver_name, promptpay_id, bank_account")
+    .select(
+      "id, overlay_token, receiver_name, promptpay_id, bank_account, plan, plan_expires_at"
+    )
     .eq("username", input.username)
     .single();
   if (!profile) return { error: "ไม่พบสตรีมเมอร์" };
@@ -101,6 +106,27 @@ export async function submitDonation(
     .eq("profile_id", profile.id)
     .single();
   const minAmount = Number(settings?.min_amount ?? 1);
+
+  // Monthly receive cap by plan (free 20 / pro 120 / elite unlimited).
+  const limit =
+    PLAN_DONATION_LIMIT[effectivePlan(profile.plan, profile.plan_expires_at)];
+  if (Number.isFinite(limit)) {
+    const now = new Date();
+    const monthStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
+    ).toISOString();
+    const { count } = await admin
+      .from("donations")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", profile.id)
+      .eq("status", "verified")
+      .gte("created_at", monthStart);
+    if ((count ?? 0) >= limit) {
+      return {
+        error: "เดือนนี้สตรีมเมอร์รับโดเนทครบจำนวนแล้ว กรุณาลองใหม่เดือนหน้า",
+      };
+    }
+  }
 
   // 1) Verify the slip against the bank via RDCW.
   const result = await inquireSlip(input.payload);
@@ -129,6 +155,31 @@ export async function submitDonation(
     return { error: "สลิปนี้เก่าเกินไป กรุณาโดเนทด้วยการโอนล่าสุด" };
   }
 
+  // 4b) Pick the amount-tier variant (highest minAmount <= verifiedAmount).
+  const variants = Array.isArray(settings?.variants)
+    ? (settings.variants as unknown as AlertVariant[])
+    : [];
+  const variant = variants
+    .filter((vv) => Number(vv?.minAmount) <= verifiedAmount)
+    .sort((a, b) => Number(b.minAmount) - Number(a.minAmount))[0];
+
+  const accentColor = variant?.accentColor || settings?.accent_color;
+  const imageUrl = variant?.imageUrl || settings?.image_url;
+  const animation = variant?.animation || settings?.animation;
+
+  // 4c) Optional YouTube media, gated by the streamer's settings + amount.
+  let mediaEmbed: string | null = null;
+  let mediaSeconds: number | undefined;
+  const mediaId = parseYouTubeId(input.mediaUrl);
+  if (
+    settings?.media_enabled &&
+    mediaId &&
+    verifiedAmount >= Number(settings?.media_min_amount ?? 100)
+  ) {
+    mediaEmbed = youTubeEmbedUrl(mediaId);
+    mediaSeconds = Number(settings?.media_max_seconds ?? 30);
+  }
+
   // 5) Insert — the UNIQUE constraint on slip_trans_ref blocks slip reuse.
   const { data: inserted, error: insErr } = await admin
     .from("donations")
@@ -145,6 +196,7 @@ export async function submitDonation(
       receiver_account:
         data.receiver?.account?.value || data.receiver?.proxy?.value || null,
       slip_image_path: input.slipImagePath ?? null,
+      media_url: mediaEmbed ? input.mediaUrl?.trim() ?? null : null,
       slip_data: result.raw as Json,
     })
     .select("id")
@@ -164,13 +216,16 @@ export async function submitDonation(
       donorName: parsed.data.donorName,
       amount: verifiedAmount,
       message: parsed.data.message ?? null,
-      accentColor: settings?.accent_color,
+      accentColor,
       textColor: settings?.text_color,
-      imageUrl: settings?.image_url,
+      imageUrl,
       durationMs: settings?.duration_ms,
       ttsEnabled: settings?.tts_enabled,
       ttsVoice: settings?.tts_voice,
-      animation: settings?.animation,
+      animation,
+      soundUrl: settings?.sound_url,
+      mediaUrl: mediaEmbed,
+      mediaSeconds,
     });
   } catch {
     // swallow — the streamer can replay from history later

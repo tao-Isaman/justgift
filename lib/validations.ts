@@ -54,6 +54,7 @@ export const alertSettingsSchema = z.object({
   durationMs: z.number().min(1000).max(30000),
   accentColor: hexColor,
   textColor: hexColor,
+  font: z.enum(["Rajdhani", "Orbitron", "Anuphan", "FCVision"]),
   minAmount: z.number().min(0).max(1_000_000),
   soundUrl: httpUrlOrEmpty,
   soundVolume: z.number().min(0).max(1),
@@ -64,6 +65,22 @@ export const alertSettingsSchema = z.object({
   ttsVolume: z.number().min(0).max(1),
   bigThreshold: z.number().min(0).max(1_000_000),
   bigEffect: z.boolean(),
+  goalEnabled: z.boolean(),
+  goalTitle: z.string().trim().max(60),
+  goalAmount: z.number().min(0).max(100_000_000),
+  mediaEnabled: z.boolean(),
+  mediaMinAmount: z.number().min(0).max(1_000_000),
+  mediaMaxSeconds: z.number().min(5).max(120),
+  variants: z
+    .array(
+      z.object({
+        minAmount: z.number().min(1).max(1_000_000),
+        accentColor: hexColor,
+        imageUrl: httpUrlOrEmpty,
+        animation: z.enum(["slide", "zoom", "flip", "glitch"]),
+      })
+    )
+    .max(5),
 });
 
 export type AlertSettingsValues = z.infer<typeof alertSettingsSchema>;

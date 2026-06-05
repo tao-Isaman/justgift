@@ -90,9 +90,9 @@ export const PLANS: PlanDef[] = [
     price: 0,
     tagline: "ทุกอย่างที่จำเป็นสำหรับเริ่มรับโดเนท",
     features: [
+      "โดเนทสูงสุด 20 ครั้ง/เดือน",
       "รับโดเนทที่ตรวจสลิปแล้ว",
       "overlay OBS เรียลไทม์",
-      "สไตล์แจ้งเตือน 1 แบบ",
       "ประวัติการโดเนท",
       "มีลายน้ำ JustGift บนการแจ้งเตือน",
     ],
@@ -105,6 +105,7 @@ export const PLANS: PlanDef[] = [
     featured: true,
     features: [
       "ทุกอย่างในแพ็กฟรี",
+      "โดเนทสูงสุด 120 ครั้ง/เดือน",
       "ปรับสี ฟอนต์ และเสียงแจ้งเตือนเอง",
       "ใส่ภาพ / GIF แจ้งเตือนเอง",
       "อ่านข้อความเป็นเสียงภาษาไทย",
@@ -119,9 +120,11 @@ export const PLANS: PlanDef[] = [
     tagline: "สำหรับครีเอเตอร์มืออาชีพ",
     features: [
       "ทุกอย่างในแพ็กโปร",
-      "เป้าหมายโดเนทและลีดเดอร์บอร์ด",
-      "แชร์มีเดีย (คลิปขึ้นจอ)",
-      "สไตล์แจ้งเตือนหลายแบบ",
+      "โดเนทไม่จำกัด",
+      "เป้าหมายโดเนท + overlay เป้าหมาย",
+      "ลีดเดอร์บอร์ดผู้โดเนทสูงสุด",
+      "แชร์มีเดีย (คลิป YouTube ขึ้นจอ)",
+      "สไตล์แจ้งเตือนหลายแบบ (ตามยอด)",
       "ซัพพอร์ตแบบเร่งด่วน",
     ],
   },
@@ -133,6 +136,28 @@ export const ALERT_ANIMATIONS: { value: AlertAnimation; label: string }[] = [
   { value: "flip", label: "Flip" },
   { value: "glitch", label: "Glitch" },
 ];
+
+export const ALERT_FONTS = [
+  { value: "Rajdhani", label: "Rajdhani (เกม)" },
+  { value: "Orbitron", label: "Orbitron (ดิจิทัล)" },
+  { value: "Anuphan", label: "Anuphan (ไทย)" },
+  { value: "FCVision", label: "FC Vision (ไทย)" },
+] as const;
+
+/** Resolve an alert font choice to a CSS font-family stack (Thai fallback). */
+export function fontFamily(font: string | null | undefined): string {
+  switch (font) {
+    case "Orbitron":
+      return "var(--font-orbitron), var(--font-anuphan), sans-serif";
+    case "Anuphan":
+      return "var(--font-anuphan), sans-serif";
+    case "FCVision":
+      return '"FC Vision", var(--font-anuphan), sans-serif';
+    case "Rajdhani":
+    default:
+      return "var(--font-rajdhani), var(--font-anuphan), sans-serif";
+  }
+}
 
 /** Web Speech API voice hints (best-effort; resolved client-side). */
 export const TTS_VOICES: { value: string; label: string }[] = [
@@ -154,6 +179,18 @@ export const THAI_BANKS: { value: string; label: string }[] = [
 ];
 
 export const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, elite: 2 };
+
+/** Max verified donations a streamer can RECEIVE per calendar month, by plan. */
+export const PLAN_DONATION_LIMIT: Record<Plan, number> = {
+  free: 20,
+  pro: 120,
+  elite: Infinity,
+};
+
+export function donationLimitLabel(plan: Plan): string {
+  const n = PLAN_DONATION_LIMIT[plan];
+  return Number.isFinite(n) ? `${n} ครั้ง/เดือน` : "ไม่จำกัด";
+}
 
 /** Feature gating helper. */
 export function planAllows(plan: Plan, required: Plan) {

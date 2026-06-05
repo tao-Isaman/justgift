@@ -71,7 +71,9 @@ In the [Supabase dashboard](https://supabase.com/dashboard), create a project, t
 - **SQL Editor** → run the migrations in `supabase/migrations/` in order:
   `0001_init.sql` (tables, RLS, public profile view, `slips` bucket, realtime,
   new-user trigger), `0002_overlay.sql` (overlay alert-settings columns), then
-  `0003_subscriptions.sql` (plan expiry + subscription payments). All are
+  `0003_subscriptions.sql` (plan expiry + subscription payments), then
+  `0004_goals_stats.sql` (donation goals + dashboard stats/leaderboard), then
+  `0005_media_variants.sql` (media share + amount-tier variants). All are
   idempotent and safe to re-run.
 - **Authentication → Providers → Email**: for fast local testing you can turn
   **"Confirm email"** off. (With it on, signup shows a "check your email" step and
@@ -116,6 +118,13 @@ The OBS overlay (`/overlay/<token>`) supports:
 - **Sound**: a custom sound URL + volume, or a built-in synthesized chime
 - **Thai TTS** with voice, rate and volume
 - **Big-donation hype**: donations ≥ a threshold get a larger card + confetti
+- **Custom font** (Pro): Rajdhani / Orbitron / Anuphan / FC Vision
+- **Donation goal bar** (Elite): a separate browser source at
+  `/overlay/<token>/goal` that fills live as donations come in
+- **Media share** (Elite): donors attach a YouTube link (amount-gated + max
+  length); it plays after the alert and can be skipped from the dashboard
+- **Amount-tier variants** (Elite): different accent / image / animation per
+  donation size (highest tier ≤ the amount wins)
 - **Queue** so alerts never overlap, and a free-plan watermark
 
 All of it is configured at **`/dashboard/alerts`** with a live preview, "play
@@ -146,6 +155,9 @@ Setup:
 3. Set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `CRON_SECRET`, and ensure
    `NEXT_PUBLIC_APP_URL` is your real URL (used for return links).
 4. Local webhook testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+
+**Monthly receive caps** (enforced in `submitDonation`, shown on the dashboard):
+Free **20** / Pro **120** / Elite **unlimited** verified donations per month.
 
 ## Security & anti-fraud
 

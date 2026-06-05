@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
-import { Loader2, Lock, Play, Save } from "lucide-react";
+import { Loader2, Lock, Play, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,12 @@ import {
   alertSettingsSchema,
   type AlertSettingsValues,
 } from "@/lib/validations";
-import { TTS_VOICES, planAllows } from "@/lib/constants";
+import {
+  ALERT_FONTS,
+  TTS_VOICES,
+  fontFamily,
+  planAllows,
+} from "@/lib/constants";
 import type {
   AlertAnimation,
   AlertPosition,
@@ -74,6 +79,7 @@ export function AlertSettingsForm({
   overlayUrl: string;
 }) {
   const pro = planAllows(plan, "pro");
+  const elite = planAllows(plan, "elite");
   const [saving, startSave] = useTransition();
   const [testing, startTest] = useTransition();
   const [replay, setReplay] = useState(0);
@@ -86,6 +92,7 @@ export function AlertSettingsForm({
       durationMs: Number(settings?.duration_ms ?? 7000),
       accentColor: settings?.accent_color ?? "#dc2626",
       textColor: settings?.text_color ?? "#ffffff",
+      font: (settings?.font as AlertSettingsValues["font"]) ?? "Rajdhani",
       minAmount: Number(settings?.min_amount ?? 1),
       soundUrl: settings?.sound_url ?? "",
       soundVolume: Number(settings?.sound_volume ?? 0.8),
@@ -96,7 +103,21 @@ export function AlertSettingsForm({
       ttsVolume: Number(settings?.tts_volume ?? 1),
       bigThreshold: Number(settings?.big_threshold ?? 500),
       bigEffect: settings?.big_effect ?? true,
+      goalEnabled: settings?.goal_enabled ?? false,
+      goalTitle: settings?.goal_title ?? "",
+      goalAmount: Number(settings?.goal_amount ?? 0),
+      mediaEnabled: settings?.media_enabled ?? false,
+      mediaMinAmount: Number(settings?.media_min_amount ?? 100),
+      mediaMaxSeconds: Number(settings?.media_max_seconds ?? 30),
+      variants: Array.isArray(settings?.variants)
+        ? (settings.variants as unknown as AlertSettingsValues["variants"])
+        : [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variants",
   });
 
   const v = useWatch({ control }) as AlertSettingsValues;
@@ -244,6 +265,35 @@ export function AlertSettingsForm({
               />
             </Row>
           </div>
+          <Row label="ฟอนต์">
+            <Controller
+              control={control}
+              name="font"
+              render={({ field }) => (
+                <Select
+                  items={ALERT_FONTS}
+                  value={field.value}
+                  onValueChange={(val) =>
+                    field.onChange(
+                      (val as AlertSettingsValues["font"]) ?? "Rajdhani"
+                    )
+                  }
+                  disabled={!pro}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ALERT_FONTS.map((f) => (
+                      <SelectItem key={f.value} value={f.value}>
+                        {f.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Row>
           <Row label="รูป / GIF แจ้งเตือน (ลิงก์)">
             <Controller
               control={control}
@@ -444,6 +494,266 @@ export function AlertSettingsForm({
             />
           </Row>
         </Section>
+
+        {/* Donation goal — Elite */}
+        <Section
+          title="เป้าหมายโดเนท (Elite)"
+          locked={!elite}
+          lockLabel="อัปเกรดเป็นอีลิท"
+        >
+          <Row label="เปิดใช้งานเป้าหมาย">
+            <Controller
+              control={control}
+              name="goalEnabled"
+              render={({ field }) => (
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={(c) => field.onChange(c)}
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+          <Row label="ชื่อเป้าหมาย">
+            <Controller
+              control={control}
+              name="goalTitle"
+              render={({ field }) => (
+                <Input
+                  placeholder="เช่น เป้าหมายเดือนนี้"
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+          <Row label="ยอดเป้าหมาย (฿)">
+            <Controller
+              control={control}
+              name="goalAmount"
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={field.value}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === "" ? 0 : Number(e.target.value)
+                    )
+                  }
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 p-2.5">
+            <input
+              readOnly
+              value={`${overlayUrl}/goal`}
+              onFocus={(e) => e.currentTarget.select()}
+              className="h-8 min-w-0 flex-1 bg-transparent font-mono text-xs text-muted-foreground outline-none"
+            />
+            <CopyButton value={`${overlayUrl}/goal`} />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            เพิ่ม URL นี้เป็น Browser Source แยกใน OBS เพื่อแสดงแถบเป้าหมาย
+          </p>
+        </Section>
+
+        {/* Media share — Elite */}
+        <Section
+          title="แชร์มีเดีย (Elite)"
+          locked={!elite}
+          lockLabel="อัปเกรดเป็นอีลิท"
+        >
+          <Row label="ให้ผู้โดเนทแนบคลิป YouTube">
+            <Controller
+              control={control}
+              name="mediaEnabled"
+              render={({ field }) => (
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={(c) => field.onChange(c)}
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+          <Row label="ยอดขั้นต่ำที่แนบมีเดียได้ (฿)">
+            <Controller
+              control={control}
+              name="mediaMinAmount"
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={field.value}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === "" ? 0 : Number(e.target.value)
+                    )
+                  }
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+          <Row label={`ความยาวสูงสุด — ${v.mediaMaxSeconds} วินาที`}>
+            <Controller
+              control={control}
+              name="mediaMaxSeconds"
+              render={({ field }) => (
+                <Slider
+                  min={5}
+                  max={120}
+                  step={5}
+                  value={field.value}
+                  onValueChange={(val) =>
+                    field.onChange(Array.isArray(val) ? val[0] : val)
+                  }
+                  disabled={!elite}
+                />
+              )}
+            />
+          </Row>
+        </Section>
+
+        {/* Amount-tier variants — Elite */}
+        <Section
+          title="สไตล์แจ้งเตือนหลายแบบ (ตามยอด)"
+          locked={!elite}
+          lockLabel="อัปเกรดเป็นอีลิท"
+        >
+          <p className="text-xs text-muted-foreground">
+            ตั้งสไตล์ต่างกันตามยอดโดเนท — ระบบเลือกระดับสูงสุดที่ยอดถึง (สูงสุด 5
+            ระดับ)
+          </p>
+          {fields.length === 0 ? (
+            <p className="text-sm text-muted-foreground">ยังไม่มีระดับ</p>
+          ) : (
+            <div className="space-y-3">
+              {fields.map((f, index) => (
+                <div
+                  key={f.id}
+                  className="space-y-3 rounded-lg border border-border/60 p-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      ระดับ {index + 1}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => remove(index)}
+                      disabled={!elite}
+                      aria-label="ลบระดับ"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Row label="ยอดตั้งแต่ (฿)">
+                      <Controller
+                        control={control}
+                        name={`variants.${index}.minAmount`}
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min={1}
+                            value={field.value}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value === ""
+                                  ? 0
+                                  : Number(e.target.value)
+                              )
+                            }
+                            disabled={!elite}
+                          />
+                        )}
+                      />
+                    </Row>
+                    <Row label="อนิเมชัน">
+                      <Controller
+                        control={control}
+                        name={`variants.${index}.animation`}
+                        render={({ field }) => (
+                          <Select
+                            items={ANIMATIONS}
+                            value={field.value}
+                            onValueChange={(val) =>
+                              field.onChange((val as AlertAnimation) ?? "slide")
+                            }
+                            disabled={!elite}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ANIMATIONS.map((a) => (
+                                <SelectItem key={a.value} value={a.value}>
+                                  {a.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </Row>
+                  </div>
+                  <Row label="สีหลัก">
+                    <Controller
+                      control={control}
+                      name={`variants.${index}.accentColor`}
+                      render={({ field }) => (
+                        <ColorInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={!elite}
+                        />
+                      )}
+                    />
+                  </Row>
+                  <Row label="รูป / GIF (ลิงก์ — เว้นว่างได้)">
+                    <Controller
+                      control={control}
+                      name={`variants.${index}.imageUrl`}
+                      render={({ field }) => (
+                        <Input
+                          placeholder="https://…"
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={!elite}
+                        />
+                      )}
+                    />
+                  </Row>
+                </div>
+              ))}
+            </div>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={!elite || fields.length >= 5}
+            onClick={() =>
+              append({
+                minAmount: 100,
+                accentColor: "#dc2626",
+                imageUrl: "",
+                animation: "zoom",
+              })
+            }
+          >
+            <Plus className="size-4" /> เพิ่มระดับ
+          </Button>
+        </Section>
       </div>
 
       {/* Preview / actions */}
@@ -469,6 +779,7 @@ export function AlertSettingsForm({
                       textColor={v.textColor}
                       imageUrl={v.imageUrl || null}
                       watermark={!pro}
+                      fontFamily={fontFamily(v.font)}
                       className="w-full"
                     />
                   </motion.div>
@@ -539,10 +850,12 @@ export function AlertSettingsForm({
 function Section({
   title,
   locked = false,
+  lockLabel = "อัปเกรดเป็นโปร",
   children,
 }: {
   title: string;
   locked?: boolean;
+  lockLabel?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -553,7 +866,7 @@ function Section({
           {locked ? (
             <Link href="/dashboard/billing">
               <Badge variant="outline" className="gap-1">
-                <Lock className="size-3" /> อัปเกรดเป็นโปร
+                <Lock className="size-3" /> {lockLabel}
               </Badge>
             </Link>
           ) : null}

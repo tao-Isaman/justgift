@@ -34,6 +34,7 @@ export type OverlayDefaults = {
   ttsVolume: number;
   bigThreshold: number;
   bigEffect: boolean;
+  fontFamily: string;
   watermark: boolean;
 };
 
@@ -45,9 +46,25 @@ export function OverlayClient({
   defaults: OverlayDefaults;
 }) {
   const [current, setCurrent] = useState<OverlayAlertPayload | null>(null);
+  const [media, setMedia] = useState<{ url: string; key: string } | null>(null);
+
   const queueRef = useRef<OverlayAlertPayload[]>([]);
   const showingRef = useRef(false);
+  const mediaActiveRef = useRef(false);
+  const mediaTimerRef = useRef<number | null>(null);
   const playNextRef = useRef<() => void>(() => {});
+  const endRef = useRef<() => void>(() => {});
+
+  const end = useCallback(() => {
+    if (mediaTimerRef.current) {
+      window.clearTimeout(mediaTimerRef.current);
+      mediaTimerRef.current = null;
+    }
+    mediaActiveRef.current = false;
+    setMedia(null);
+    showingRef.current = false;
+    window.setTimeout(() => playNextRef.current(), 500);
+  }, []);
 
   const playNext = useCallback(() => {
     if (showingRef.current) return;
@@ -55,6 +72,7 @@ export function OverlayClient({
     if (!next) return;
 
     showingRef.current = true;
+    setMedia(null);
     setCurrent(next);
 
     const big = next.amount >= defaults.bigThreshold && defaults.bigEffect;
@@ -62,7 +80,7 @@ export function OverlayClient({
       (next.durationMs ?? defaults.durationMs) * (big ? 1.5 : 1)
     );
 
-    playAlertSound(defaults.soundUrl, defaults.soundVolume, big);
+    playAlertSound(next.soundUrl ?? defaults.soundUrl, defaults.soundVolume, big);
 
     const ttsOn = next.ttsEnabled ?? defaults.ttsEnabled;
     if (ttsOn && next.message) {
@@ -76,17 +94,28 @@ export function OverlayClient({
 
     window.setTimeout(() => {
       setCurrent(null);
-      showingRef.current = false;
-      window.setTimeout(() => playNextRef.current(), 500);
+      if (next.mediaUrl) {
+        const secs = Math.min(120, Math.max(5, Number(next.mediaSeconds ?? 30)));
+        mediaActiveRef.current = true;
+        setMedia({ url: next.mediaUrl, key: next.id });
+        mediaTimerRef.current = window.setTimeout(
+          () => endRef.current(),
+          secs * 1000
+        );
+      } else {
+        endRef.current();
+      }
     }, duration);
   }, [defaults]);
 
+  useEffect(() => {
+    endRef.current = end;
+  }, [end]);
   useEffect(() => {
     playNextRef.current = playNext;
   }, [playNext]);
 
   useEffect(() => {
-    // Warm up TTS voices (some browsers populate them lazily).
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.getVoices();
     }
@@ -99,6 +128,9 @@ export function OverlayClient({
       .on("broadcast", { event: "donation" }, ({ payload }) => {
         queueRef.current.push(payload as OverlayAlertPayload);
         playNext();
+      })
+      .on("broadcast", { event: "skip" }, () => {
+        if (mediaActiveRef.current) endRef.current();
       })
       .subscribe();
 
@@ -118,6 +150,7 @@ export function OverlayClient({
       {current && big ? (
         <Confetti key={current.id} colors={[accent, "#ffffff", "#fbbf24"]} />
       ) : null}
+
       <div
         className={cn("absolute", positionClass(defaults.position))}
         style={{ perspective: 1000 }}
@@ -139,12 +172,35 @@ export function OverlayClient({
                 textColor={current.textColor ?? defaults.textColor}
                 imageUrl={current.imageUrl ?? defaults.imageUrl}
                 watermark={defaults.watermark}
+                fontFamily={defaults.fontFamily}
                 className={big ? "scale-105 animate-pulse-glow" : undefined}
               />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Media share (YouTube) phase */}
+      {media ? (
+        <div className="fixed inset-0 grid place-items-center">
+          <motion.div
+            key={media.key}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="aspect-video w-[70vw] max-w-4xl overflow-hidden rounded-xl shadow-2xl"
+            style={{ boxShadow: `0 0 40px ${accent}66` }}
+          >
+            <iframe
+              src={media.url}
+              title="donation media"
+              className="h-full w-full"
+              allow="autoplay; encrypted-media"
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </motion.div>
+        </div>
+      ) : null}
     </div>
   );
 }
