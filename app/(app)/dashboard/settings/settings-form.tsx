@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUpload } from "@/components/dashboard/image-upload";
 import { updateProfile } from "@/lib/actions/profile";
 import {
   profileSettingsSchema,
@@ -30,7 +31,13 @@ import { formatTHB } from "@/lib/format";
 import type { Profile } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 
-export function SettingsForm({ profile }: { profile: Profile }) {
+export function SettingsForm({
+  profile,
+  userId,
+}: {
+  profile: Profile;
+  userId: string;
+}) {
   const [saving, startSave] = useTransition();
   const socials = asSocials(profile.socials);
 
@@ -39,6 +46,7 @@ export function SettingsForm({ profile }: { profile: Profile }) {
     defaultValues: {
       displayName: profile.display_name ?? "",
       bio: profile.bio ?? "",
+      avatarUrl: profile.avatar_url ?? "",
       bannerUrl: profile.banner_url ?? "",
       accentColor: profile.accent_color ?? "",
       socials: {
@@ -78,6 +86,20 @@ export function SettingsForm({ profile }: { profile: Profile }) {
           </span>{" "}
           (เปลี่ยนชื่อผู้ใช้ไม่ได้)
         </p>
+        <Row label="รูปโปรไฟล์">
+          <Controller
+            control={control}
+            name="avatarUrl"
+            render={({ field }) => (
+              <ImageUpload
+                value={field.value}
+                onChange={field.onChange}
+                userId={userId}
+                kind="avatar"
+              />
+            )}
+          />
+        </Row>
         <Row label="ชื่อที่แสดง">
           <Controller
             control={control}
@@ -104,22 +126,17 @@ export function SettingsForm({ profile }: { profile: Profile }) {
             )}
           />
         </Row>
-        <Row label="รูปแบนเนอร์ (ลิงก์)">
+        <Row label="รูปแบนเนอร์">
           <Controller
             control={control}
             name="bannerUrl"
-            render={({ field, fieldState }) => (
-              <Field error={fieldState.error?.message}>
-                <Input placeholder="https://… (รูปกว้าง ~1500×500)" {...field} />
-                {field.value ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={field.value}
-                    alt=""
-                    className="mt-2 h-24 w-full rounded-lg border border-border/60 object-cover"
-                  />
-                ) : null}
-              </Field>
+            render={({ field }) => (
+              <ImageUpload
+                value={field.value}
+                onChange={field.onChange}
+                userId={userId}
+                kind="banner"
+              />
             )}
           />
         </Row>

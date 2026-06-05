@@ -28,7 +28,7 @@ export default async function SettingsPage() {
           ปรับแต่งหน้าเพจรับโดเนทของคุณ ลิงก์โซเชียล และบัญชีรับเงิน
         </p>
       </header>
-      <SettingsForm profile={profile} />
+      <SettingsForm profile={profile} userId={user.id} />
     </div>
   );
 }

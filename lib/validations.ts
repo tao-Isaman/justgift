@@ -90,6 +90,7 @@ export const profileSettingsSchema = z
   .object({
     displayName: z.string().trim().min(2, "อย่างน้อย 2 ตัวอักษร").max(40),
     bio: z.string().trim().max(300, "ไม่เกิน 300 ตัวอักษร"),
+    avatarUrl: httpUrlOrEmpty,
     bannerUrl: httpUrlOrEmpty,
     accentColor: z
       .string()

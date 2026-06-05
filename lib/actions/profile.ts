@@ -76,6 +76,7 @@ export async function updateProfile(
     .update({
       display_name: v.displayName,
       bio: v.bio || null,
+      avatar_url: v.avatarUrl || null,
       banner_url: v.bannerUrl || null,
       accent_color: v.accentColor || null,
       socials,
