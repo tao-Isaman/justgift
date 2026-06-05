@@ -155,6 +155,7 @@ export async function submitDonation(
       durationMs: settings?.duration_ms,
       ttsEnabled: settings?.tts_enabled,
       ttsVoice: settings?.tts_voice,
+      animation: settings?.animation,
     });
   } catch {
     // swallow — the streamer can replay from history later

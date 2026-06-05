@@ -68,9 +68,10 @@ bun install
 
 In the [Supabase dashboard](https://supabase.com/dashboard), create a project, then:
 
-- **SQL Editor** → paste and run `supabase/migrations/0001_init.sql`.
-  This creates the tables, RLS policies, the public profile view, the `slips`
-  storage bucket, realtime, and the new-user trigger.
+- **SQL Editor** → run the migrations in `supabase/migrations/` in order:
+  `0001_init.sql` (tables, RLS, public profile view, `slips` bucket, realtime,
+  new-user trigger) then `0002_overlay.sql` (overlay alert-settings columns).
+  Both are idempotent and safe to re-run.
 - **Authentication → Providers → Email**: for fast local testing you can turn
   **"Confirm email"** off. (With it on, signup shows a "check your email" step and
   the link returns to `/auth/callback`.)
@@ -105,6 +106,20 @@ bun run build    # production build
 bun run lint     # eslint
 ```
 
+## Overlay features
+
+The OBS overlay (`/overlay/<token>`) supports:
+
+- **Animations**: slide / zoom / flip (3D) / glitch
+- **Position**: top-left / top-center / top-right / center
+- **Sound**: a custom sound URL + volume, or a built-in synthesized chime
+- **Thai TTS** with voice, rate and volume
+- **Big-donation hype**: donations ≥ a threshold get a larger card + confetti
+- **Queue** so alerts never overlap, and a free-plan watermark
+
+All of it is configured at **`/dashboard/alerts`** with a live preview, "play
+preview", and "send test to overlay" (incl. a big-donation test).
+
 ## Using the overlay in OBS
 
 1. Sign up → onboarding (claim username + payout account).
@@ -129,9 +144,7 @@ bun run lint     # eslint
 
 ## Roadmap
 
-- Alert customization UI (colors, sounds, GIF, TTS) — schema & overlay already
-  support it; the `/dashboard/alerts` screen is a stub.
-- Settings screen (edit profile / payout).
+- Settings screen (edit profile / payout) — `/dashboard/settings` is still a stub.
 - Subscription billing (plan gating is wired in `lib/constants.ts`).
 - Donation goals, leaderboards, media share.
 - Confirm the exact RDCW response shape against your account and tighten

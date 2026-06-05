@@ -39,3 +39,31 @@ export const donationSchema = z.object({
 });
 
 export type DonationValues = z.infer<typeof donationSchema>;
+
+const httpUrlOrEmpty = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((v) => v === "" || /^https?:\/\/\S+$/.test(v), "ลิงก์ไม่ถูกต้อง");
+
+const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, "สีไม่ถูกต้อง");
+
+export const alertSettingsSchema = z.object({
+  animation: z.enum(["slide", "zoom", "flip", "glitch"]),
+  position: z.enum(["top-left", "top-center", "top-right", "center"]),
+  durationMs: z.number().min(1000).max(30000),
+  accentColor: hexColor,
+  textColor: hexColor,
+  minAmount: z.number().min(0).max(1_000_000),
+  soundUrl: httpUrlOrEmpty,
+  soundVolume: z.number().min(0).max(1),
+  imageUrl: httpUrlOrEmpty,
+  ttsEnabled: z.boolean(),
+  ttsVoice: z.string().max(20),
+  ttsRate: z.number().min(0.5).max(2),
+  ttsVolume: z.number().min(0).max(1),
+  bigThreshold: z.number().min(0).max(1_000_000),
+  bigEffect: z.boolean(),
+});
+
+export type AlertSettingsValues = z.infer<typeof alertSettingsSchema>;

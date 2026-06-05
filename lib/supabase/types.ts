@@ -8,6 +8,11 @@ export type Json =
 
 export type Plan = "free" | "pro" | "elite";
 export type AlertAnimation = "slide" | "zoom" | "flip" | "glitch";
+export type AlertPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "center";
 export type DonationStatus = "pending" | "verified" | "rejected" | "shown";
 
 export type Database = {
@@ -77,6 +82,12 @@ export type Database = {
           font: string;
           tts_enabled: boolean;
           tts_voice: string | null;
+          position: AlertPosition;
+          sound_volume: number;
+          tts_rate: number;
+          tts_volume: number;
+          big_threshold: number;
+          big_effect: boolean;
           updated_at: string;
         };
         Insert: {
@@ -91,6 +102,12 @@ export type Database = {
           font?: string;
           tts_enabled?: boolean;
           tts_voice?: string | null;
+          position?: AlertPosition;
+          sound_volume?: number;
+          tts_rate?: number;
+          tts_volume?: number;
+          big_threshold?: number;
+          big_effect?: boolean;
           updated_at?: string;
         };
         Update: {
@@ -105,6 +122,12 @@ export type Database = {
           font?: string;
           tts_enabled?: boolean;
           tts_voice?: string | null;
+          position?: AlertPosition;
+          sound_volume?: number;
+          tts_rate?: number;
+          tts_volume?: number;
+          big_threshold?: number;
+          big_effect?: boolean;
           updated_at?: string;
         };
         Relationships: [];
@@ -209,5 +232,7 @@ export type OverlayAlertPayload = {
   durationMs?: number;
   ttsEnabled?: boolean;
   ttsVoice?: string | null;
+  animation?: AlertAnimation;
+  position?: AlertPosition;
   test?: boolean;
 };

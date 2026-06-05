@@ -44,6 +44,13 @@ export default async function OverlayPage({
         durationMs: settings?.duration_ms ?? 7000,
         ttsEnabled: settings?.tts_enabled ?? false,
         ttsVoice: settings?.tts_voice ?? null,
+        animation: settings?.animation ?? "slide",
+        position: settings?.position ?? "top-center",
+        soundVolume: settings?.sound_volume ?? 0.8,
+        ttsRate: settings?.tts_rate ?? 1,
+        ttsVolume: settings?.tts_volume ?? 1,
+        bigThreshold: settings?.big_threshold ?? 500,
+        bigEffect: settings?.big_effect ?? true,
         watermark: profile.plan === "free",
       }}
     />

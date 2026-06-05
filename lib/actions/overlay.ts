@@ -3,7 +3,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { broadcastToOverlay } from "@/lib/supabase/broadcast";
 
-export async function sendTestAlert(): Promise<{ error?: string; ok?: boolean }> {
+export async function sendTestAlert(input?: {
+  amount?: number;
+  donorName?: string;
+  message?: string;
+}): Promise<{ error?: string; ok?: boolean }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,15 +30,18 @@ export async function sendTestAlert(): Promise<{ error?: string; ok?: boolean }>
   try {
     await broadcastToOverlay(profile.overlay_token, {
       id: crypto.randomUUID(),
-      donorName: "ผู้ทดสอบ",
-      amount: 99,
-      message: "🎉 นี่คือการแจ้งเตือนทดสอบจากแดชบอร์ดของคุณ!",
+      donorName: input?.donorName?.trim() || "ผู้ทดสอบ",
+      amount: input?.amount && input.amount > 0 ? input.amount : 99,
+      message:
+        input?.message?.trim() ||
+        "🎉 นี่คือการแจ้งเตือนทดสอบจากแดชบอร์ดของคุณ!",
       accentColor: settings?.accent_color,
       textColor: settings?.text_color,
       imageUrl: settings?.image_url,
       durationMs: settings?.duration_ms,
       ttsEnabled: settings?.tts_enabled,
       ttsVoice: settings?.tts_voice,
+      animation: settings?.animation,
       test: true,
     });
     return { ok: true };
