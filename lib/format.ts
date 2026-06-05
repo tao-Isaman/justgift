@@ -25,3 +25,12 @@ export function formatNumber(n: number) {
 export function timeAgo(date: string | Date) {
   return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
 }
+
+/** Whole days from now until `date` (0 if past, null if no date). */
+export function daysUntil(date: string | Date | null): number | null {
+  if (!date) return null;
+  return Math.max(
+    0,
+    Math.ceil((new Date(date).getTime() - Date.now()) / 86_400_000)
+  );
+}

@@ -32,6 +32,7 @@ export type Database = {
           overlay_token: string;
           plan: Plan;
           onboarded: boolean;
+          plan_expires_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -48,6 +49,7 @@ export type Database = {
           overlay_token?: string;
           plan?: Plan;
           onboarded?: boolean;
+          plan_expires_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -64,6 +66,7 @@ export type Database = {
           overlay_token?: string;
           plan?: Plan;
           onboarded?: boolean;
+          plan_expires_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -178,6 +181,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      subscription_payments: {
+        Row: {
+          id: string;
+          profile_id: string;
+          package_id: string;
+          tier: "pro" | "elite";
+          days: number;
+          amount: number;
+          currency: string;
+          method: string;
+          status: string;
+          stripe_session_id: string | null;
+          stripe_payment_intent: string | null;
+          period_start: string | null;
+          period_end: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          package_id: string;
+          tier: "pro" | "elite";
+          days: number;
+          amount: number;
+          currency?: string;
+          method?: string;
+          status?: string;
+          stripe_session_id?: string | null;
+          stripe_payment_intent?: string | null;
+          period_start?: string | null;
+          period_end?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          status?: string;
+          period_start?: string | null;
+          period_end?: string | null;
+          stripe_payment_intent?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       public_profiles: {
@@ -204,6 +248,14 @@ export type Database = {
           month_total: number;
         }[];
       };
+      apply_subscription: {
+        Args: { p_profile: string; p_tier: string; p_days: number };
+        Returns: string;
+      };
+      expire_subscriptions: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -217,6 +269,8 @@ export type AlertSettings =
 export type AlertSettingsUpdate =
   Database["public"]["Tables"]["alert_settings"]["Update"];
 export type Donation = Database["public"]["Tables"]["donations"]["Row"];
+export type SubscriptionPayment =
+  Database["public"]["Tables"]["subscription_payments"]["Row"];
 export type PublicProfile =
   Database["public"]["Views"]["public_profiles"]["Row"];
 

@@ -14,6 +14,6 @@ export const config = {
      * - favicon and common static image/font files
      * - /overlay (public OBS browser source, must stay fast & cookieless)
      */
-    "/((?!_next/static|_next/image|favicon.ico|overlay|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|overlay|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
   ],
 };

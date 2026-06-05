@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { SITE } from "@/lib/constants";
+import { SITE, effectivePlan } from "@/lib/constants";
 import { AlertSettingsForm } from "./alert-settings-form";
 
 export const metadata = { title: "การแจ้งเตือน" };
@@ -14,7 +14,7 @@ export default async function AlertsPage() {
   const [{ data: profile }, { data: settings }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("plan, overlay_token")
+      .select("plan, plan_expires_at, overlay_token")
       .eq("id", userId)
       .single(),
     supabase
@@ -35,7 +35,10 @@ export default async function AlertsPage() {
         </p>
       </div>
       <AlertSettingsForm
-        plan={profile?.plan ?? "free"}
+        plan={effectivePlan(
+          profile?.plan ?? "free",
+          profile?.plan_expires_at ?? null
+        )}
         settings={settings}
         overlayUrl={overlayUrl}
       />

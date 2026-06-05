@@ -159,3 +159,42 @@ export const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, elite: 2 };
 export function planAllows(plan: Plan, required: Plan) {
   return PLAN_RANK[plan] >= PLAN_RANK[required];
 }
+
+export type PaidPlan = Exclude<Plan, "free">;
+
+/** Prepaid subscription packages (PromptPay one-time, durations). */
+export type SubPackage = {
+  id: string;
+  tier: PaidPlan;
+  days: number;
+  price: number; // THB
+  label: string;
+  note?: string;
+};
+
+export const PACKAGES: SubPackage[] = [
+  { id: "pro-30", tier: "pro", days: 30, price: 99, label: "30 วัน" },
+  { id: "pro-90", tier: "pro", days: 90, price: 267, label: "90 วัน", note: "ประหยัด 10%" },
+  { id: "pro-365", tier: "pro", days: 365, price: 990, label: "365 วัน", note: "ประหยัด 17%" },
+  { id: "elite-30", tier: "elite", days: 30, price: 199, label: "30 วัน" },
+  { id: "elite-90", tier: "elite", days: 90, price: 537, label: "90 วัน", note: "ประหยัด 10%" },
+  {
+    id: "elite-365",
+    tier: "elite",
+    days: 365,
+    price: 1990,
+    label: "365 วัน",
+    note: "ประหยัด 17%",
+  },
+];
+
+export function getPackage(id: string): SubPackage | undefined {
+  return PACKAGES.find((p) => p.id === id);
+}
+
+/** The plan a profile is actually entitled to right now (free once expired). */
+export function effectivePlan(plan: Plan, expiresAt: string | null): Plan {
+  if (plan === "free") return "free";
+  if (expiresAt && new Date(expiresAt).getTime() > Date.now()) return plan;
+  return "free";
+}

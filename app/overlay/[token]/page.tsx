@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { effectivePlan } from "@/lib/constants";
 import { OverlayClient } from "./overlay-client";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +14,7 @@ export default async function OverlayPage({
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("profiles")
-    .select("id, plan")
+    .select("id, plan, plan_expires_at")
     .eq("overlay_token", token)
     .single();
 
@@ -51,7 +52,8 @@ export default async function OverlayPage({
         ttsVolume: settings?.tts_volume ?? 1,
         bigThreshold: settings?.big_threshold ?? 500,
         bigEffect: settings?.big_effect ?? true,
-        watermark: profile.plan === "free",
+        watermark:
+          effectivePlan(profile.plan, profile.plan_expires_at) === "free",
       }}
     />
   );

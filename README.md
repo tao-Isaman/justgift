@@ -70,8 +70,9 @@ In the [Supabase dashboard](https://supabase.com/dashboard), create a project, t
 
 - **SQL Editor** → run the migrations in `supabase/migrations/` in order:
   `0001_init.sql` (tables, RLS, public profile view, `slips` bucket, realtime,
-  new-user trigger) then `0002_overlay.sql` (overlay alert-settings columns).
-  Both are idempotent and safe to re-run.
+  new-user trigger), `0002_overlay.sql` (overlay alert-settings columns), then
+  `0003_subscriptions.sql` (plan expiry + subscription payments). All are
+  idempotent and safe to re-run.
 - **Authentication → Providers → Email**: for fast local testing you can turn
   **"Confirm email"** off. (With it on, signup shows a "check your email" step and
   the link returns to `/auth/callback`.)
@@ -126,6 +127,25 @@ preview", and "send test to overlay" (incl. a big-donation test).
 2. Dashboard → **Your OBS overlay** → copy the URL.
 3. OBS → **Sources → + → Browser** → paste the URL, set 1920×1080.
 4. Click **Send test alert** in the dashboard to confirm it works.
+
+## Subscriptions (packages)
+
+Streamers buy **Pro/Elite** as **prepaid durations** (30/90/365 days) and pay by
+**PromptPay via Stripe Checkout** (one-time — PromptPay can't auto-renew). Flow:
+`/dashboard/billing` → pick a package → `createCheckout` → Stripe hosted page →
+PromptPay QR → webhook `checkout.session.completed` → `apply_subscription` stacks
+`plan_expires_at`. `effectivePlan()` treats an expired plan as free immediately,
+and a daily Vercel cron (`/api/cron/expire`, see `vercel.json`) downgrades lapsed
+rows.
+
+Setup:
+1. Stripe (Thailand account) → enable **PromptPay** under Settings → Payment methods.
+2. Developers → Webhooks → add `https://<your-domain>/api/stripe/webhook`, events
+   `checkout.session.completed` + `checkout.session.async_payment_succeeded`, and
+   copy the signing secret.
+3. Set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `CRON_SECRET`, and ensure
+   `NEXT_PUBLIC_APP_URL` is your real URL (used for return links).
+4. Local webhook testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
 
 ## Security & anti-fraud
 
