@@ -30,9 +30,15 @@ export default async function AppLayout({
   const initials = (profile.display_name ?? "U").slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex min-h-svh">
+    <div className="glass-cards relative flex min-h-svh">
+      {/* Esport grid + ambient glow behind the whole dashboard */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-grid" />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-96 bg-glow"
+      />
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col border-r border-border/60 bg-sidebar p-4 md:flex">
+      <aside className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col border-r border-border/60 bg-sidebar/70 p-4 backdrop-blur-xl md:flex">
         <div className="px-2">
           <Logo />
         </div>
@@ -83,7 +89,7 @@ export default async function AppLayout({
           <DashboardNav orientation="horizontal" />
         </div>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main id="main" className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

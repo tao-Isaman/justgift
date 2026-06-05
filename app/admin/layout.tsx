@@ -14,8 +14,13 @@ export default async function AdminLayout({
   await requireAdmin();
 
   return (
-    <div className="flex min-h-svh">
-      <aside className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col border-r border-border/60 bg-sidebar p-4 md:flex">
+    <div className="glass-cards relative flex min-h-svh">
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-grid" />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-96 bg-glow"
+      />
+      <aside className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col border-r border-border/60 bg-sidebar/70 p-4 backdrop-blur-xl md:flex">
         <div className="flex items-center gap-2 px-2">
           <Logo />
           <Badge variant="outline" className="border-primary/40 text-primary">
@@ -49,7 +54,7 @@ export default async function AdminLayout({
         <div className="overflow-x-auto border-b border-border/60 px-2 py-2 md:hidden">
           <AdminNav orientation="horizontal" />
         </div>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main id="main" className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

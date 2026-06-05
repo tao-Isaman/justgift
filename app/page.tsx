@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { GrainOverlay } from "@/components/grain-overlay";
 import { AlertCard } from "@/components/alert-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -111,7 +112,7 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* ---------------- Hero ---------------- */}
         <section className="relative overflow-hidden border-b border-border/60">
           <div className="pointer-events-none absolute inset-0 bg-grid" />
@@ -263,7 +264,7 @@ export default function LandingPage() {
                     <Badge className="absolute -top-3 left-6">ยอดนิยม</Badge>
                   )}
                   <h3 className="font-heading text-xl font-bold">{plan.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="mt-1 min-h-10 text-sm text-muted-foreground">
                     {plan.tagline}
                   </p>
                   <div className="mt-5 flex items-baseline gap-1">
@@ -349,6 +350,7 @@ export default function LandingPage() {
         </section>
       </main>
       <SiteFooter />
+      <GrainOverlay />
     </>
   );
 }

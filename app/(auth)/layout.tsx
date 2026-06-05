@@ -1,4 +1,5 @@
 import { Logo } from "@/components/logo";
+import { GrainOverlay } from "@/components/grain-overlay";
 
 export default function AuthLayout({
   children,
@@ -15,6 +16,7 @@ export default function AuthLayout({
         </div>
         {children}
       </div>
+      <GrainOverlay />
     </div>
   );
 }

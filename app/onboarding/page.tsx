@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
+import { GrainOverlay } from "@/components/grain-overlay";
 import {
   Card,
   CardContent,
@@ -52,6 +53,7 @@ export default async function OnboardingPage() {
           </CardContent>
         </Card>
       </div>
+      <GrainOverlay />
     </div>
   );
 }

@@ -64,7 +64,7 @@ export default async function DashboardPage() {
   const atLimit = finiteLimit && monthCount >= limit;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">ภาพรวม</h1>
         <p className="text-sm text-muted-foreground">
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-3">
         <StatCard
           icon={<Banknote className="size-5" />}
           label="ยอดโดเนทรวม"

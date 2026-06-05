@@ -169,7 +169,7 @@ export function AlertSettingsForm({
       onSubmit={handleSubmit(onSubmit)}
       className="grid gap-6 lg:grid-cols-5"
     >
-      <div className="space-y-6 lg:col-span-3 lg:order-2">
+      <div className="space-y-6 lg:col-span-3">
         {/* Style — all plans */}
         <Section title="สไตล์">
           <Row label="อนิเมชัน">
@@ -752,8 +752,8 @@ export function AlertSettingsForm({
         </Section>
       </div>
 
-      {/* Previews + actions — left column */}
-      <div className="lg:col-span-2 lg:order-1">
+      {/* Previews + actions — right column */}
+      <div className="lg:col-span-2">
         <div className="space-y-3 lg:sticky lg:top-6">
           <Card>
             <CardContent className="space-y-3">
