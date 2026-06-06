@@ -27,13 +27,13 @@ const SIZES = {
     message: "mt-3 text-sm",
   },
   lg: {
-    box: "w-[640px] p-8",
-    gap: "gap-6",
-    icon: "size-24",
-    glyph: "size-12",
-    name: "text-3xl",
-    amount: "text-6xl",
-    message: "mt-5 text-2xl",
+    box: "w-[760px] p-10",
+    gap: "gap-7",
+    icon: "size-28",
+    glyph: "size-14",
+    name: "text-4xl",
+    amount: "text-7xl",
+    message: "mt-6 text-3xl",
   },
 } as const;
 

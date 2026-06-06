@@ -134,15 +134,24 @@ function ttsUrl(text: string, lang: string): string {
 
 function playOnce(url: string, vol: number, rate: number): Promise<void> {
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const done = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (ok) resolve();
+      else reject(new Error("tts audio error"));
+    };
     try {
       const a = new Audio(url);
       a.volume = vol;
       a.playbackRate = clampRate(rate);
-      a.onended = () => resolve();
-      a.onerror = () => reject(new Error("tts audio error"));
-      a.play().catch(reject);
-    } catch (e) {
-      reject(e);
+      a.onended = () => done(true);
+      a.onerror = () => done(false);
+      // Safety net: never let a stuck clip hold the alert open forever.
+      window.setTimeout(() => done(true), 30000);
+      a.play().catch(() => done(false));
+    } catch {
+      done(false);
     }
   });
 }

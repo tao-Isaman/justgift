@@ -50,10 +50,12 @@ export function OverlayClient({
   const queueRef = useRef<OverlayAlertPayload[]>([]);
   const showingRef = useRef(false);
   const timerRef = useRef<number | null>(null);
+  const seqRef = useRef(0); // invalidates a pending finisher when we end early
   const playNextRef = useRef<() => void>(() => {});
   const endRef = useRef<() => void>(() => {});
 
   const end = useCallback(() => {
+    seqRef.current++;
     if (timerRef.current) {
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -70,6 +72,7 @@ export function OverlayClient({
     if (!next) return;
 
     showingRef.current = true;
+    const myGen = ++seqRef.current;
     // Show the alert and the donor GIF at the same time.
     setCurrent(next);
     setMedia(next.mediaUrl ? { url: next.mediaUrl, key: next.id } : null);
@@ -82,6 +85,7 @@ export function OverlayClient({
     playAlertSound(next.soundUrl ?? defaults.soundUrl, defaults.soundVolume, big);
 
     const ttsOn = next.ttsEnabled ?? defaults.ttsEnabled;
+    let ttsDone: Promise<void> = Promise.resolve();
     if (ttsOn) {
       const readMode = next.ttsRead ?? defaults.ttsRead;
       const text =
@@ -89,7 +93,7 @@ export function OverlayClient({
           ? (next.message ?? "").trim()
           : buildTtsText(next.donorName, next.amount, next.message);
       if (text) {
-        speakDonation(
+        ttsDone = speakDonation(
           text,
           next.ttsVoice ?? defaults.ttsVoice ?? "th-TH",
           defaults.ttsRate,
@@ -98,7 +102,13 @@ export function OverlayClient({
       }
     }
 
-    timerRef.current = window.setTimeout(() => endRef.current(), duration);
+    // Keep the alert up until BOTH the min display time AND the TTS finish.
+    const minDisplay = new Promise<void>((resolve) => {
+      timerRef.current = window.setTimeout(resolve, duration);
+    });
+    Promise.all([ttsDone, minDisplay]).then(() => {
+      if (seqRef.current === myGen) endRef.current();
+    });
   }, [defaults]);
 
   useEffect(() => {
