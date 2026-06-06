@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gift } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -16,9 +16,14 @@ export function Logo({
       href={href}
       className={cn("group inline-flex items-center gap-2.5", className)}
     >
-      <span className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground glow-red-sm clip-corner transition-transform group-hover:scale-105">
-        <Gift className="size-4.5" />
-      </span>
+      <Image
+        src="/logo-mark.webp"
+        alt="Just Gift"
+        width={32}
+        height={32}
+        priority
+        className="size-8 transition-transform group-hover:scale-105"
+      />
       {showText && (
         <span className="font-display text-lg font-bold tracking-[0.18em]">
           JUST <span className="text-primary text-glow">GIFT</span>
