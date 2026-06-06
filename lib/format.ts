@@ -40,3 +40,8 @@ export function isFuture(date: string | Date | null): boolean {
   if (!date) return false;
   return new Date(date).getTime() > Date.now();
 }
+
+/** ISO timestamp for N days before now (used for rolling-window queries). */
+export function daysAgoIso(days: number): string {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}

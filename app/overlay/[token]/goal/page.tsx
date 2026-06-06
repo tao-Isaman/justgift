@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { effectivePlan } from "@/lib/constants";
+import { daysAgoIso } from "@/lib/format";
 import { GoalOverlayClient } from "./goal-client";
 
 export const dynamic = "force-dynamic";
@@ -25,23 +26,23 @@ export default async function GoalOverlayPage({
 
   const { data: settings } = await admin
     .from("alert_settings")
-    .select("goal_enabled, goal_amount, goal_title, accent_color")
+    .select("goal_enabled, goal_amount, goal_title, accent_color, goal_period_days")
     .eq("profile_id", profile.id)
     .single();
 
   if (!settings?.goal_enabled || Number(settings.goal_amount) <= 0) return null;
 
-  // Current month total (verified).
-  const now = new Date();
-  const monthStart = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
-  ).toISOString();
-  const { data: rows } = await admin
+  // Sum verified donations within the configured period (0 = all-time).
+  let query = admin
     .from("donations")
     .select("verified_amount")
     .eq("profile_id", profile.id)
-    .eq("status", "verified")
-    .gte("created_at", monthStart);
+    .eq("status", "verified");
+  const periodDays = Number(settings.goal_period_days ?? 0);
+  if (periodDays > 0) {
+    query = query.gte("created_at", daysAgoIso(periodDays));
+  }
+  const { data: rows } = await query;
   const startTotal = (rows ?? []).reduce(
     (sum, r) => sum + Number(r.verified_amount ?? 0),
     0

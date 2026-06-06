@@ -57,6 +57,13 @@ const ANIMATIONS: { value: AlertAnimation; label: string }[] = [
   { value: "glitch", label: "กลิตช์" },
 ];
 
+const GOAL_PERIODS: { value: string; label: string }[] = [
+  { value: "0", label: "ตลอดกาล" },
+  { value: "7", label: "7 วันล่าสุด" },
+  { value: "30", label: "30 วันล่าสุด" },
+  { value: "90", label: "90 วันล่าสุด" },
+];
+
 const SAMPLE = {
   name: "ผู้ทดสอบ",
   amount: 250,
@@ -108,6 +115,7 @@ export function AlertSettingsForm({
       goalEnabled: settings?.goal_enabled ?? false,
       goalTitle: settings?.goal_title ?? "",
       goalAmount: Number(settings?.goal_amount ?? 0),
+      goalPeriodDays: Number(settings?.goal_period_days ?? 0),
       mediaEnabled: settings?.media_enabled ?? false,
       mediaMinAmount: Number(settings?.media_min_amount ?? 100),
       mediaMaxSeconds: Number(settings?.media_max_seconds ?? 30),
@@ -546,6 +554,34 @@ export function AlertSettingsForm({
                 />
               )}
             />
+          </Row>
+          <Row label="ช่วงเวลาของเป้าหมาย">
+            <Controller
+              control={control}
+              name="goalPeriodDays"
+              render={({ field }) => (
+                <Select
+                  items={GOAL_PERIODS}
+                  value={String(field.value)}
+                  onValueChange={(val) => field.onChange(Number(val ?? 0))}
+                  disabled={!elite}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GOAL_PERIODS.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <p className="text-xs text-muted-foreground">
+              นับยอดโดเนทเฉพาะในช่วงที่เลือก (ย้อนหลังจากวันนี้)
+            </p>
           </Row>
         </Section>
 

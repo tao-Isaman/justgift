@@ -116,6 +116,7 @@ export type Database = {
           goal_enabled: boolean;
           goal_amount: number;
           goal_title: string | null;
+          goal_period_days: number;
           media_enabled: boolean;
           media_min_amount: number;
           media_max_seconds: number;
@@ -144,6 +145,7 @@ export type Database = {
           goal_enabled?: boolean;
           goal_amount?: number;
           goal_title?: string | null;
+          goal_period_days?: number;
           media_enabled?: boolean;
           media_min_amount?: number;
           media_max_seconds?: number;
@@ -172,6 +174,7 @@ export type Database = {
           goal_enabled?: boolean;
           goal_amount?: number;
           goal_title?: string | null;
+          goal_period_days?: number;
           media_enabled?: boolean;
           media_min_amount?: number;
           media_max_seconds?: number;

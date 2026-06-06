@@ -68,6 +68,7 @@ export const alertSettingsSchema = z.object({
   goalEnabled: z.boolean(),
   goalTitle: z.string().trim().max(60),
   goalAmount: z.number().min(0).max(100_000_000),
+  goalPeriodDays: z.number().int().min(0).max(3650),
   mediaEnabled: z.boolean(),
   mediaMinAmount: z.number().min(0).max(1_000_000),
   mediaMaxSeconds: z.number().min(5).max(120),

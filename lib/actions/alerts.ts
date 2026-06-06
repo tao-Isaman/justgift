@@ -44,6 +44,7 @@ export async function updateAlertSettings(
       goal_enabled: v.goalEnabled,
       goal_amount: v.goalAmount,
       goal_title: v.goalTitle || null,
+      goal_period_days: v.goalPeriodDays,
       media_enabled: v.mediaEnabled,
       media_min_amount: v.mediaMinAmount,
       media_max_seconds: v.mediaMaxSeconds,
