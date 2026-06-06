@@ -1,7 +1,7 @@
 import type { AlertAnimation, Plan } from "@/lib/supabase/types";
 
 export const SITE = {
-  name: "Just Donate",
+  name: "Just Gift",
   tagline: "Slip in. Alert out.",
   description:
     "Verified donation alerts for Thai streamers. Donors transfer and upload a slip — we verify it instantly and fire an on-stream alert.",
@@ -24,18 +24,18 @@ export const SEO_KEYWORDS = [
   "donation alert",
   "streamer donation",
   "PromptPay",
-  "Just Donate",
+  "Just Gift",
 ];
 
 /** Thai FAQ — also rendered as FAQPage structured data on the landing page. */
 export const FAQ: { q: string; a: string }[] = [
   {
-    q: "Just Donate คือระบบโดเนทแบบไหน",
-    a: "Just Donate คือระบบโดเนทสำหรับสตรีมเมอร์ ให้แฟน ๆ โดเนทผ่านพร้อมเพย์หรือโอนผ่านธนาคารแล้วอัปโหลดสลิป ระบบจะตรวจสลิปอัตโนมัติแล้วแจ้งเตือนโดเนทขึ้นจอสตรีมทันที",
+    q: "Just Gift คือระบบโดเนทแบบไหน",
+    a: "Just Gift คือระบบโดเนทสำหรับสตรีมเมอร์ ให้แฟน ๆ โดเนทผ่านพร้อมเพย์หรือโอนผ่านธนาคารแล้วอัปโหลดสลิป ระบบจะตรวจสลิปอัตโนมัติแล้วแจ้งเตือนโดเนทขึ้นจอสตรีมทันที",
   },
   {
     q: "รับโดเนทผ่านพร้อมเพย์ได้ไหม",
-    a: "ได้ครับ Just Donate รองรับโดเนทพร้อมเพย์และทุกธนาคารในไทย เงินโดเนทเข้าบัญชีของคุณโดยตรง ไม่ผ่านคนกลาง",
+    a: "ได้ครับ Just Gift รองรับโดเนทพร้อมเพย์และทุกธนาคารในไทย เงินโดเนทเข้าบัญชีของคุณโดยตรง ไม่ผ่านคนกลาง",
   },
   {
     q: "ระบบโดเนทตรวจสลิปอย่างไร",
@@ -43,7 +43,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "มีค่าธรรมเนียมหักจากยอดโดเนทไหม",
-    a: "ไม่มี Just Donate ไม่หักเปอร์เซ็นต์จากยอดโดเนท เงินทั้งหมดเข้าบัญชีคุณโดยตรง เราคิดค่าบริการแบบสมาชิกรายเดือนเท่านั้น",
+    a: "ไม่มี Just Gift ไม่หักเปอร์เซ็นต์จากยอดโดเนท เงินทั้งหมดเข้าบัญชีคุณโดยตรง เราคิดค่าบริการแบบสมาชิกรายเดือนเท่านั้น",
   },
   {
     q: "ใช้ระบบโดเนทกับ OBS ได้ไหม",
@@ -95,7 +95,7 @@ export const PLANS: PlanDef[] = [
       "รับโดเนทที่ตรวจสลิปแล้ว",
       "overlay OBS เรียลไทม์",
       "ประวัติการโดเนท",
-      "มีลายน้ำ Just Donate บนการแจ้งเตือน",
+      "มีลายน้ำ Just Gift บนการแจ้งเตือน",
     ],
   },
   {

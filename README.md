@@ -1,9 +1,9 @@
-# Just Donate 🎁
+# Just Gift 🎁
 
 Verified donation alerts for Thai streamers. Donors transfer money and upload their
-bank slip; Just Donate verifies the slip against the bank via
+bank slip; Just Gift verifies the slip against the bank via
 [slip.rdcw.co.th](https://slip.rdcw.co.th) and fires a real-time alert on the
-streamer's OBS overlay. Money goes **directly to the streamer** — Just Donate never
+streamer's OBS overlay. Money goes **directly to the streamer** — Just Gift never
 holds funds.
 
 > Black / red esport theme · Next.js 16 · TypeScript · Bun · shadcn (Base UI) · Supabase

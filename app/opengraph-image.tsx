@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Just Donate — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์";
+  "Just Gift — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -38,7 +38,7 @@ export default function Image() {
               fontWeight: 800,
             }}
           >
-            JD
+            JG
           </div>
           <div
             style={{
@@ -48,7 +48,7 @@ export default function Image() {
               letterSpacing: -2,
             }}
           >
-            JUST DONATE
+            JUST GIFT
           </div>
         </div>
         <div

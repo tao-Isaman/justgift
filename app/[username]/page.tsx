@@ -18,10 +18,10 @@ export async function generateMetadata({
   const { username } = await params;
   return {
     title: `โดเนทให้ @${username}`,
-    description: `โดเนทให้ @${username} ผ่านพร้อมเพย์หรือโอนธนาคาร — ระบบโดเนทตรวจสลิปอัตโนมัติ แจ้งเตือนขึ้นจอสตรีมทันที | Just Donate`,
+    description: `โดเนทให้ @${username} ผ่านพร้อมเพย์หรือโอนธนาคาร — ระบบโดเนทตรวจสลิปอัตโนมัติ แจ้งเตือนขึ้นจอสตรีมทันที | Just Gift`,
     alternates: { canonical: `/${username}` },
     openGraph: {
-      title: `โดเนทให้ @${username} | Just Donate`,
+      title: `โดเนทให้ @${username} | Just Gift`,
       description:
         "รับโดเนทพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอทันที",
       type: "profile",
@@ -223,7 +223,7 @@ export default async function DonatePage({
         <p className="mt-10 text-center text-xs text-muted-foreground">
           ขับเคลื่อนโดย{" "}
           <Link href="/" className="text-primary hover:underline">
-            Just Donate
+            Just Gift
           </Link>{" "}
           · ทุกสลิปถูกตรวจสอบกับธนาคารก่อนแสดงการแจ้งเตือน
         </p>

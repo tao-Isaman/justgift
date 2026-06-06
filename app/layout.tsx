@@ -30,25 +30,25 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Just Donate — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
-    template: "%s · Just Donate",
+    default: "Just Gift — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
+    template: "%s · Just Gift",
   },
   description:
-    "Just Donate ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทผ่านพร้อมเพย์และทุกธนาคาร ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีมทันที เงินเข้าบัญชีคุณโดยตรง ไม่หักค่าธรรมเนียม",
+    "Just Gift ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทผ่านพร้อมเพย์และทุกธนาคาร ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีมทันที เงินเข้าบัญชีคุณโดยตรง ไม่หักค่าธรรมเนียม",
   keywords: SEO_KEYWORDS,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Just Donate — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
+    title: "Just Gift — ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์",
     description:
       "รับโดเนทผ่านพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนโดเนทขึ้นจอสตรีมทันที เงินเข้าบัญชีคุณโดยตรง",
     url: siteUrl,
-    siteName: "Just Donate",
+    siteName: "Just Gift",
     locale: "th_TH",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Just Donate — ระบบโดเนทสำหรับสตรีมเมอร์ โดเนทพร้อมเพย์",
+    title: "Just Gift — ระบบโดเนทสำหรับสตรีมเมอร์ โดเนทพร้อมเพย์",
     description:
       "ระบบโดเนทสำหรับสตรีมเมอร์ รับโดเนทพร้อมเพย์ ตรวจสลิปอัตโนมัติ แจ้งเตือนขึ้นจอทันที",
   },
