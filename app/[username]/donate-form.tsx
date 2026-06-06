@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   ImageUp,
   Loader2,
-  Shuffle,
   Smartphone,
   X,
 } from "lucide-react";
@@ -33,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/dashboard/copy-button";
 import { AlertCard } from "@/components/alert-card";
+import { GifPicker } from "@/components/gif-picker";
 import { createClient } from "@/lib/supabase/client";
 import { decodeSlipQr } from "@/lib/qr";
 import { submitDonation } from "@/lib/actions/donate";
@@ -81,7 +81,6 @@ export function DonateForm({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [success, setSuccess] = useState<Success | null>(null);
-  const [gifLoading, setGifLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<FormValues>({
@@ -89,30 +88,6 @@ export function DonateForm({
     defaultValues: { donorName: "", message: "", amount: "", mediaUrl: "" },
   });
   const amountValue = useWatch({ control: form.control, name: "amount" });
-  const mediaUrlValue = useWatch({ control: form.control, name: "mediaUrl" });
-  const gifPreview = mediaEnabled ? parseGifUrl(mediaUrlValue) : null;
-
-  async function suggestRandomGif() {
-    setGifLoading(true);
-    try {
-      const key = process.env.NEXT_PUBLIC_GIPHY_API_KEY || "dc6zaTOxFJmzC";
-      const res = await fetch(
-        `https://api.giphy.com/v1/gifs/random?api_key=${key}&tag=meme&rating=pg-13`
-      );
-      const json = await res.json();
-      const raw: string | undefined = json?.data?.images?.original?.url;
-      const clean = raw ? raw.split("?")[0] : null; // drop tracking query
-      if (clean && parseGifUrl(clean)) {
-        form.setValue("mediaUrl", clean, { shouldValidate: true });
-      } else {
-        toast.error("สุ่ม GIF ไม่สำเร็จ ลองใหม่อีกครั้ง");
-      }
-    } catch {
-      toast.error("สุ่ม GIF ไม่สำเร็จ ลองใหม่อีกครั้ง");
-    } finally {
-      setGifLoading(false);
-    }
-  }
 
   const bankLabel =
     THAI_BANKS.find((b) => b.value === bankName)?.label ?? bankName;
@@ -331,39 +306,17 @@ export function DonateForm({
                 name="mediaUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>แนบ GIF (ไม่บังคับ)</FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          placeholder="วางลิงก์ .gif หรือกดสุ่มมีม"
-                          {...field}
-                        />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={suggestRandomGif}
-                        disabled={gifLoading}
-                      >
-                        {gifLoading ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <Shuffle className="size-4" />
-                        )}
-                        สุ่มมีม
-                      </Button>
-                    </div>
+                    <FormLabel>แนบ GIF มีม (ไม่บังคับ)</FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      เด้งขึ้นจอสตรีมเมื่อโดเนทตั้งแต่ ฿{mediaMin} ขึ้นไป
+                      ค้นหาหรือสุ่ม GIF แล้วเลือก — เด้งขึ้นจอสตรีมเมื่อโดเนทตั้งแต่
+                      ฿{mediaMin} ขึ้นไป
                     </p>
-                    {gifPreview ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={gifPreview}
-                        alt="ตัวอย่าง GIF"
-                        className="mt-1 max-h-40 rounded-lg border border-border/60 object-contain"
+                    <FormControl>
+                      <GifPicker
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
                       />
-                    ) : null}
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
