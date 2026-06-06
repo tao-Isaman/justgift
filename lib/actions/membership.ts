@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { broadcastToOverlay } from "@/lib/supabase/broadcast";
-import { inquireSlip, parseTransTimestamp } from "@/lib/rdcw";
+import { verifySlip, parseTransTimestamp } from "@/lib/slip-provider";
 import { MAX_SLIP_AGE_MS, receiverMatches } from "@/lib/slip-verify";
 import { membershipTierSchema, type MembershipTierValues } from "@/lib/validations";
 import type { Json } from "@/lib/supabase/types";
@@ -148,8 +148,8 @@ export async function redeemMembershipSlip(
     user.email?.split("@")[0] ||
     "สมาชิก";
 
-  // 1) Verify the slip against the bank via RDCW.
-  const result = await inquireSlip(input.payload);
+  // 1) Verify the slip against the bank (Thunder first, RDCW fallback).
+  const result = await verifySlip(input.payload);
   if (!result.ok) return { error: result.message };
   const data = result.data;
 

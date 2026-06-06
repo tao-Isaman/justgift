@@ -2,7 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { broadcastToOverlay } from "@/lib/supabase/broadcast";
-import { inquireSlip, parseTransTimestamp } from "@/lib/rdcw";
+import { verifySlip, parseTransTimestamp } from "@/lib/slip-provider";
 import { MAX_SLIP_AGE_MS, receiverMatches } from "@/lib/slip-verify";
 import { donationSchema } from "@/lib/validations";
 import { PLAN_DONATION_LIMIT, effectivePlan } from "@/lib/constants";
@@ -79,7 +79,7 @@ export async function submitDonation(
   }
 
   // 1) Verify the slip against the bank via RDCW.
-  const result = await inquireSlip(input.payload);
+  const result = await verifySlip(input.payload);
   if (!result.ok) return { error: result.message };
   const data = result.data;
 
