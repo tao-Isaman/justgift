@@ -21,8 +21,8 @@ async function fetchGifs(query: string, offset: number): Promise<GifItem[]> {
   const url = q
     ? `https://api.giphy.com/v1/gifs/search?api_key=${key}&q=${encodeURIComponent(
         q
-      )}&limit=15&offset=${offset}&rating=pg-13&lang=th`
-    : `https://api.giphy.com/v1/gifs/trending?api_key=${key}&limit=15&offset=${offset}&rating=pg-13`;
+      )}&limit=6&offset=${offset}&rating=pg-13&lang=th`
+    : `https://api.giphy.com/v1/gifs/trending?api_key=${key}&limit=6&offset=${offset}&rating=pg-13`;
   const res = await fetch(url);
   const json = await res.json();
   const data = (json?.data ?? []) as GiphyItem[];
@@ -52,7 +52,7 @@ export function GifPicker({
 
   useEffect(() => {
     let active = true;
-    const offset = (nonce * 15) % 75; // shuffle steps through pages
+    const offset = (nonce * 6) % 90; // shuffle steps through pages
     const t = setTimeout(() => {
       setLoading(true);
       fetchGifs(query, offset)
@@ -101,7 +101,7 @@ export function GifPicker({
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-3 gap-2">
         {items.map((g) => (
           <button
             type="button"
