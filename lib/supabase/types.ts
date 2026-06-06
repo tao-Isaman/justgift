@@ -229,49 +229,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      tiktok_connection: {
-        Row: {
-          id: string;
-          open_id: string;
-          union_id: string | null;
-          scope: string | null;
-          access_token: string;
-          refresh_token: string;
-          expires_at: string;
-          refresh_expires_at: string | null;
-          display_name: string | null;
-          avatar_url: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          open_id: string;
-          union_id?: string | null;
-          scope?: string | null;
-          access_token: string;
-          refresh_token: string;
-          expires_at: string;
-          refresh_expires_at?: string | null;
-          display_name?: string | null;
-          avatar_url?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          open_id?: string;
-          union_id?: string | null;
-          scope?: string | null;
-          access_token?: string;
-          refresh_token?: string;
-          expires_at?: string;
-          refresh_expires_at?: string | null;
-          display_name?: string | null;
-          avatar_url?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       subscription_payments: {
         Row: {
           id: string;

@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Video } from "lucide-react";
+import { LayoutDashboard, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   { href: "/admin", label: "ภาพรวม", icon: LayoutDashboard, exact: true },
   { href: "/admin/users", label: "ผู้ใช้", icon: Users },
-  { href: "/admin/tiktok", label: "TikTok", icon: Video },
 ];
 
 export function AdminNav({
