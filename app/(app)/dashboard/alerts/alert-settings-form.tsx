@@ -555,7 +555,7 @@ export function AlertSettingsForm({
           locked={!elite}
           lockLabel="อัปเกรดเป็นอีลิท"
         >
-          <Row label="ให้ผู้โดเนทแนบคลิป YouTube">
+          <Row label="ให้ผู้โดเนทแนบ GIF ขึ้นจอ">
             <Controller
               control={control}
               name="mediaEnabled"
@@ -588,7 +588,7 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
-          <Row label={`ความยาวสูงสุด — ${v.mediaMaxSeconds} วินาที`}>
+          <Row label={`แสดง GIF สูงสุด — ${v.mediaMaxSeconds} วินาที`}>
             <Controller
               control={control}
               name="mediaMaxSeconds"

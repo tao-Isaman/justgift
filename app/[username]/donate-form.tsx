@@ -35,7 +35,7 @@ import { AlertCard } from "@/components/alert-card";
 import { createClient } from "@/lib/supabase/client";
 import { decodeSlipQr } from "@/lib/qr";
 import { submitDonation } from "@/lib/actions/donate";
-import { parseYouTubeId } from "@/lib/media";
+import { parseGifUrl } from "@/lib/media";
 import { THAI_BANKS } from "@/lib/constants";
 import { formatTHB } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -102,8 +102,8 @@ export function DonateForm({
       toast.error("กรุณาแนบสลิปโอนเงิน");
       return;
     }
-    if (mediaEnabled && values.mediaUrl && !parseYouTubeId(values.mediaUrl)) {
-      toast.error("ลิงก์ YouTube ไม่ถูกต้อง");
+    if (mediaEnabled && values.mediaUrl && !parseGifUrl(values.mediaUrl)) {
+      toast.error("ลิงก์ GIF ไม่ถูกต้อง — ต้องเป็นลิงก์ที่ลงท้ายด้วย .gif");
       return;
     }
     startTransition(async () => {
@@ -305,12 +305,16 @@ export function DonateForm({
                 name="mediaUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>แนบคลิป YouTube (ไม่บังคับ)</FormLabel>
+                    <FormLabel>แนบ GIF (ไม่บังคับ)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://youtu.be/…" {...field} />
+                      <Input
+                        placeholder="https://media.giphy.com/…/giphy.gif"
+                        {...field}
+                      />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">
-                      เล่นบนสตรีมเมื่อโดเนทตั้งแต่ ฿{mediaMin} ขึ้นไป
+                      เด้งขึ้นจอสตรีมเมื่อโดเนทตั้งแต่ ฿{mediaMin} ขึ้นไป
+                      (วางลิงก์ที่ลงท้ายด้วย .gif)
                     </p>
                     <FormMessage />
                   </FormItem>

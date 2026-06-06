@@ -6,7 +6,7 @@ import { verifySlip, parseTransTimestamp } from "@/lib/slip-provider";
 import { MAX_SLIP_AGE_MS, receiverMatches } from "@/lib/slip-verify";
 import { donationSchema } from "@/lib/validations";
 import { PLAN_DONATION_LIMIT, effectivePlan } from "@/lib/constants";
-import { parseYouTubeId, youTubeEmbedUrl } from "@/lib/media";
+import { parseGifUrl } from "@/lib/media";
 import type { AlertVariant, Json } from "@/lib/supabase/types";
 
 export type SubmitDonationInput = {
@@ -117,16 +117,16 @@ export async function submitDonation(
   const imageUrl = variant?.imageUrl || settings?.image_url;
   const animation = variant?.animation || settings?.animation;
 
-  // 4c) Optional YouTube media, gated by the streamer's settings + amount.
-  let mediaEmbed: string | null = null;
+  // 4c) Optional donor GIF, gated by the streamer's settings + amount.
+  let gifUrl: string | null = null;
   let mediaSeconds: number | undefined;
-  const mediaId = parseYouTubeId(input.mediaUrl);
+  const gif = parseGifUrl(input.mediaUrl);
   if (
     settings?.media_enabled &&
-    mediaId &&
+    gif &&
     verifiedAmount >= Number(settings?.media_min_amount ?? 100)
   ) {
-    mediaEmbed = youTubeEmbedUrl(mediaId);
+    gifUrl = gif;
     mediaSeconds = Number(settings?.media_max_seconds ?? 30);
   }
 
@@ -146,7 +146,7 @@ export async function submitDonation(
       receiver_account:
         data.receiver?.account?.value || data.receiver?.proxy?.value || null,
       slip_image_path: input.slipImagePath ?? null,
-      media_url: mediaEmbed ? input.mediaUrl?.trim() ?? null : null,
+      media_url: gifUrl,
       slip_data: result.raw as Json,
     })
     .select("id")
@@ -174,7 +174,7 @@ export async function submitDonation(
       ttsVoice: settings?.tts_voice,
       animation,
       soundUrl: settings?.sound_url,
-      mediaUrl: mediaEmbed,
+      mediaUrl: gifUrl,
       mediaSeconds,
     });
   } catch {

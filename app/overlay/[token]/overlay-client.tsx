@@ -3,10 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { createClient } from "@/lib/supabase/client";
-import { parseYouTubeId } from "@/lib/media";
 import { AlertCard } from "@/components/alert-card";
 import { Confetti } from "@/components/confetti";
-import { YouTubeMedia } from "@/components/youtube-media";
 import {
   ALERT_VARIANTS,
   buildTtsText,
@@ -143,7 +141,6 @@ export function OverlayClient({
 
   const big =
     !!current && current.amount >= defaults.bigThreshold && defaults.bigEffect;
-  const mediaId = media ? parseYouTubeId(media.url) : null;
   const animation: AlertAnimation = current?.animation ?? defaults.animation;
   const variant = ALERT_VARIANTS[animation];
   const accent = current?.accentColor ?? defaults.accentColor;
@@ -183,29 +180,19 @@ export function OverlayClient({
         </AnimatePresence>
       </div>
 
-      {/* Media share (YouTube) phase */}
+      {/* Donor GIF phase */}
       {media ? (
-        <div className="fixed inset-0 grid place-items-center">
-          <motion.div
+        <div className="fixed inset-0 grid place-items-center p-10">
+          <motion.img
             key={media.key}
+            src={media.url}
+            alt=""
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="aspect-video w-[70vw] max-w-4xl overflow-hidden rounded-xl shadow-2xl"
-            style={{ boxShadow: `0 0 40px ${accent}66` }}
-          >
-            {mediaId ? (
-              <YouTubeMedia videoId={mediaId} />
-            ) : (
-              <iframe
-                src={media.url}
-                title="donation media"
-                className="h-full w-full"
-                allow="autoplay; encrypted-media"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            )}
-          </motion.div>
+            className="max-h-[70vh] max-w-[70vw] rounded-xl object-contain"
+            style={{ filter: `drop-shadow(0 0 40px ${accent}aa)` }}
+          />
         </div>
       ) : null}
     </div>

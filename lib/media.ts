@@ -30,3 +30,20 @@ function validId(id: string | null | undefined): string | null {
 export function youTubeEmbedUrl(id: string): string {
   return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
 }
+
+/**
+ * Validate a donor-supplied GIF link. Must be an https URL pointing at an actual
+ * .gif (so it renders as an <img> on the overlay). Returns the cleaned URL or
+ * null. Works with Giphy/Tenor direct links (…/giphy.gif, …/tenor.gif).
+ */
+export function parseGifUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url.trim());
+    if (u.protocol !== "https:") return null;
+    if (!u.pathname.toLowerCase().endsWith(".gif")) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
