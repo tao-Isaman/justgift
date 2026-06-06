@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { createClient } from "@/lib/supabase/client";
+import { parseYouTubeId } from "@/lib/media";
 import { AlertCard } from "@/components/alert-card";
 import { Confetti } from "@/components/confetti";
+import { YouTubeMedia } from "@/components/youtube-media";
 import {
   ALERT_VARIANTS,
   buildTtsText,
@@ -83,7 +85,7 @@ export function OverlayClient({
     playAlertSound(next.soundUrl ?? defaults.soundUrl, defaults.soundVolume, big);
 
     const ttsOn = next.ttsEnabled ?? defaults.ttsEnabled;
-    if (ttsOn && next.message) {
+    if (ttsOn) {
       speakDonation(
         buildTtsText(next.donorName, next.amount, next.message),
         next.ttsVoice ?? defaults.ttsVoice ?? "th-TH",
@@ -141,6 +143,7 @@ export function OverlayClient({
 
   const big =
     !!current && current.amount >= defaults.bigThreshold && defaults.bigEffect;
+  const mediaId = media ? parseYouTubeId(media.url) : null;
   const animation: AlertAnimation = current?.animation ?? defaults.animation;
   const variant = ALERT_VARIANTS[animation];
   const accent = current?.accentColor ?? defaults.accentColor;
@@ -191,13 +194,17 @@ export function OverlayClient({
             className="aspect-video w-[70vw] max-w-4xl overflow-hidden rounded-xl shadow-2xl"
             style={{ boxShadow: `0 0 40px ${accent}66` }}
           >
-            <iframe
-              src={media.url}
-              title="donation media"
-              className="h-full w-full"
-              allow="autoplay; encrypted-media"
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
+            {mediaId ? (
+              <YouTubeMedia videoId={mediaId} />
+            ) : (
+              <iframe
+                src={media.url}
+                title="donation media"
+                className="h-full w-full"
+                allow="autoplay; encrypted-media"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            )}
           </motion.div>
         </div>
       ) : null}

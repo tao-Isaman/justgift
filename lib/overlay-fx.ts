@@ -109,18 +109,53 @@ export function buildTtsText(
   return message ? `${base} ${message}` : base;
 }
 
-export function speakDonation(
-  text: string,
-  lang: string,
-  rate: number,
-  volume: number
-) {
+const clampRate = (r: number) => Math.min(2, Math.max(0.5, r || 1));
+
+/** Split text into <=180-char chunks (TTS endpoints cap length). Cuts at a
+ *  space when possible, else hard-cuts (Thai has no inter-word spaces). */
+function chunkText(text: string, max = 180): string[] {
+  const out: string[] = [];
+  let rest = text.trim();
+  while (rest.length > max) {
+    let cut = rest.lastIndexOf(" ", max);
+    if (cut <= 0) cut = max;
+    out.push(rest.slice(0, cut).trim());
+    rest = rest.slice(cut).trim();
+  }
+  if (rest) out.push(rest);
+  return out;
+}
+
+function googleTtsUrl(text: string, lang: string): string {
+  const tl = (lang || "th").slice(0, 2);
+  return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${tl}&q=${encodeURIComponent(
+    text
+  )}`;
+}
+
+function playOnce(url: string, vol: number, rate: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      const a = new Audio(url);
+      a.volume = vol;
+      a.playbackRate = clampRate(rate);
+      a.onended = () => resolve();
+      a.onerror = () => reject(new Error("tts audio error"));
+      a.play().catch(reject);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+/** Last-resort browser TTS (works in normal browsers, not in OBS/CEF). */
+function speakWebSpeech(text: string, lang: string, rate: number, vol: number) {
   try {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang || "th-TH";
-    u.rate = Math.min(2, Math.max(0.5, rate));
-    u.volume = clamp01(volume);
+    u.rate = clampRate(rate);
+    u.volume = vol;
     const voices = window.speechSynthesis.getVoices();
     const match = voices.find((v) =>
       v.lang?.toLowerCase().startsWith((lang || "th").slice(0, 2))
@@ -130,6 +165,28 @@ export function speakDonation(
     window.speechSynthesis.speak(u);
   } catch {
     // ignore
+  }
+}
+
+/**
+ * Speak a donation. Uses audio-based TTS first because it plays through a real
+ * <audio> element, which works inside OBS's browser source (CEF ships no Web
+ * Speech voices). Falls back to the Web Speech API if the audio fails.
+ */
+export async function speakDonation(
+  text: string,
+  lang: string,
+  rate: number,
+  volume: number
+) {
+  const vol = clamp01(volume);
+  if (vol <= 0 || !text || typeof window === "undefined") return;
+  try {
+    for (const chunk of chunkText(text)) {
+      await playOnce(googleTtsUrl(chunk, lang), vol, rate);
+    }
+  } catch {
+    speakWebSpeech(text, lang, rate, vol);
   }
 }
 
