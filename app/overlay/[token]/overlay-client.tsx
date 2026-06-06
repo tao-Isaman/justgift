@@ -9,10 +9,8 @@ import {
   ALERT_VARIANTS,
   buildTtsText,
   playAlertSound,
-  positionClass,
   speakDonation,
 } from "@/lib/overlay-fx";
-import { cn } from "@/lib/utils";
 import type {
   AlertAnimation,
   AlertPosition,
@@ -141,16 +139,13 @@ export function OverlayClient({
   const accent = current?.accentColor ?? defaults.accentColor;
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
       {current && big ? (
         <Confetti key={current.id} colors={[accent, "#ffffff", "#fbbf24"]} />
       ) : null}
 
-      <div
-        className={cn("absolute", positionClass(defaults.position))}
-        style={{ perspective: 1000 }}
-      >
-        <div className="flex flex-col items-center gap-3">
+      <div style={{ perspective: 1000 }}>
+        <div className="flex flex-col items-center gap-4">
           <AnimatePresence mode="wait">
             {current && (
               <motion.div
@@ -185,7 +180,7 @@ export function OverlayClient({
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="max-h-56 w-auto max-w-sm rounded-xl object-contain"
+              className="max-h-72 w-auto max-w-md rounded-xl object-contain"
               style={{ filter: `drop-shadow(0 0 24px ${accent}aa)` }}
             />
           ) : null}
