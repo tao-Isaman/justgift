@@ -7,6 +7,7 @@ import { z } from "zod";
 import {
   Banknote,
   CheckCircle2,
+  Download,
   ImageUp,
   Loader2,
   Smartphone,
@@ -29,7 +30,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { CopyButton } from "@/components/dashboard/copy-button";
 import { AlertCard } from "@/components/alert-card";
 import { GifPicker } from "@/components/gif-picker";
@@ -39,6 +40,7 @@ import { submitDonation } from "@/lib/actions/donate";
 import { parseGifUrl } from "@/lib/media";
 import { THAI_BANKS } from "@/lib/constants";
 import { formatTHB } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   donorName: z.string().trim().min(1, "กรอกชื่อ").max(40),
@@ -54,6 +56,7 @@ export function DonateForm({
   username,
   displayName,
   promptpayId,
+  promptpayQr,
   bankName,
   bankAccount,
   mediaEnabled,
@@ -63,6 +66,7 @@ export function DonateForm({
   username: string;
   displayName: string;
   promptpayId: string | null;
+  promptpayQr?: string | null;
   bankName: string | null;
   bankAccount: string | null;
   mediaEnabled: boolean;
@@ -192,6 +196,28 @@ export function DonateForm({
               label="พร้อมเพย์"
               value={promptpayId}
             />
+          ) : null}
+          {promptpayQr ? (
+            <div className="flex flex-col items-center gap-2 pt-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={promptpayQr}
+                alt="PromptPay QR"
+                className="size-44 rounded-lg bg-white p-2"
+              />
+              <a
+                href={promptpayQr}
+                download={`promptpay-${username}.png`}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" })
+                )}
+              >
+                <Download className="size-4" /> บันทึก QR
+              </a>
+              <p className="text-center text-xs text-muted-foreground">
+                สแกนด้วยแอปธนาคารเพื่อโอน แล้วอัปโหลดสลิปด้านล่าง
+              </p>
+            </div>
           ) : null}
           {bankLabel && bankAccount ? (
             <PayRow

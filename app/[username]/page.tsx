@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
+import { promptPayPayload } from "@/lib/promptpay";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GoalBar } from "@/components/goal-bar";
@@ -91,6 +93,18 @@ export default async function DonatePage({
   }
 
   const accent = profile.accent_color || "#dc2626";
+
+  // Build a scannable PromptPay QR (reusable, no amount — payer enters it).
+  let promptpayQr: string | null = null;
+  const ppPayload = promptPayPayload(profile.promptpay_id ?? "");
+  if (ppPayload) {
+    promptpayQr = await QRCode.toDataURL(ppPayload, {
+      margin: 1,
+      width: 512,
+      errorCorrectionLevel: "M",
+      color: { dark: "#000000", light: "#ffffff" },
+    });
+  }
   const socials = asSocials(profile.socials);
   const initials = (profile.display_name ?? "JD").slice(0, 2).toUpperCase();
   const goalActive = !!goal?.enabled && Number(goal.target) > 0;
@@ -186,6 +200,7 @@ export default async function DonatePage({
             username={profile.username ?? username}
             displayName={profile.display_name ?? `@${profile.username}`}
             promptpayId={profile.promptpay_id}
+            promptpayQr={promptpayQr}
             bankName={profile.bank_name}
             bankAccount={profile.bank_account}
             mediaEnabled={profile.media_enabled}
