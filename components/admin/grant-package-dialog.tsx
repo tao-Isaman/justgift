@@ -23,10 +23,7 @@ import {
 import { adminGrantPackage, adminSetFree } from "@/lib/actions/admin";
 import type { Plan } from "@/lib/supabase/types";
 
-const TIERS = [
-  { value: "pro", label: "โปร" },
-  { value: "elite", label: "อีลิท" },
-];
+const TIERS = [{ value: "elite", label: "อีลิท" }];
 const DAYS = [
   { value: "30", label: "30 วัน" },
   { value: "90", label: "90 วัน" },
@@ -43,7 +40,7 @@ export function GrantPackageDialog({
   currentPlan: Plan;
 }) {
   const [open, setOpen] = useState(false);
-  const [tier, setTier] = useState<"pro" | "elite">("pro");
+  const [tier, setTier] = useState<"pro" | "elite">("elite");
   const [days, setDays] = useState("30");
   const [pending, startGrant] = useTransition();
   const [revoking, startRevoke] = useTransition();
@@ -92,7 +89,7 @@ export function GrantPackageDialog({
               items={TIERS}
               value={tier}
               onValueChange={(val) =>
-                setTier((val as "pro" | "elite") ?? "pro")
+                setTier((val as "pro" | "elite") ?? "elite")
               }
             >
               <SelectTrigger className="w-full">

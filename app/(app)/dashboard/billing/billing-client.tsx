@@ -18,7 +18,6 @@ const PLAN_LABEL: Record<Plan, string> = {
 };
 
 const TIERS: { tier: "pro" | "elite"; popular?: boolean }[] = [
-  { tier: "pro", popular: true },
   { tier: "elite" },
 ];
 

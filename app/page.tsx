@@ -249,7 +249,7 @@ export default function LandingPage() {
               title="เริ่มฟรี อัปเกรดเมื่อโตขึ้น"
               subtitle="เราไม่หักจากยอดโดเนทของคุณ — เงินเข้าบัญชีคุณโดยตรง"
             />
-            <div className="mt-12 grid items-start gap-6 md:grid-cols-3">
+            <div className="mx-auto mt-12 grid max-w-3xl items-start gap-6 md:grid-cols-2">
               {PLANS.map((plan) => (
                 <div
                   key={plan.id}

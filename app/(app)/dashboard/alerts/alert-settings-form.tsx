@@ -78,8 +78,10 @@ export function AlertSettingsForm({
   settings: AlertSettings | null;
   overlayUrl: string;
 }) {
-  const pro = planAllows(plan, "pro");
   const elite = planAllows(plan, "elite");
+  // Cosmetic editing is now Elite-only (Free uses the default look + watermark).
+  // `pro` is kept as an alias so the per-section gating below stays readable.
+  const pro = elite;
   const [saving, startSave] = useTransition();
   const [testing, startTest] = useTransition();
   const [replay, setReplay] = useState(0);

@@ -56,7 +56,8 @@ export async function submitDonation(
     .single();
   const minAmount = Number(settings?.min_amount ?? 1);
 
-  // Monthly receive cap by plan (free 20 / pro 120 / elite unlimited).
+  // Monthly receive cap by plan. Currently unlimited for all plans, so this
+  // block is a no-op; kept so a soft cap can be reintroduced via PLAN_DONATION_LIMIT.
   const limit =
     PLAN_DONATION_LIMIT[effectivePlan(profile.plan, profile.plan_expires_at)];
   if (Number.isFinite(limit)) {

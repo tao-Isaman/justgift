@@ -89,39 +89,28 @@ export const PLANS: PlanDef[] = [
     id: "free",
     name: "ฟรี",
     price: 0,
-    tagline: "ทุกอย่างที่จำเป็นสำหรับเริ่มรับโดเนท",
+    tagline: "รับโดเนทได้ครบ ไม่จำกัดจำนวน",
     features: [
-      "โดเนทสูงสุด 20 ครั้ง/เดือน",
-      "รับโดเนทที่ตรวจสลิปแล้ว",
+      "รับโดเนทตรวจสลิปอัตโนมัติ ไม่จำกัด",
       "overlay OBS เรียลไทม์",
       "ประวัติการโดเนท",
+      "แจ้งเตือนสไตล์เริ่มต้น (ปรับแต่งไม่ได้)",
       "มีลายน้ำ Just Gift บนการแจ้งเตือน",
-    ],
-  },
-  {
-    id: "pro",
-    name: "โปร",
-    price: 99,
-    tagline: "ทำให้การแจ้งเตือนเป็นสไตล์ของคุณ",
-    featured: true,
-    features: [
-      "ทุกอย่างในแพ็กฟรี",
-      "โดเนทสูงสุด 120 ครั้ง/เดือน",
-      "ปรับสี ฟอนต์ และเสียงแจ้งเตือนเอง",
-      "ใส่ภาพ / GIF แจ้งเตือนเอง",
-      "อ่านข้อความเป็นเสียงภาษาไทย",
-      "ไม่มีลายน้ำ",
-      "ตั้งยอดโดเนทขั้นต่ำได้",
     ],
   },
   {
     id: "elite",
     name: "อีลิท",
     price: 199,
-    tagline: "สำหรับครีเอเตอร์มืออาชีพ",
+    tagline: "ปลดล็อกทุกฟีเจอร์ ปรับแต่งได้เต็มที่",
+    featured: true,
     features: [
-      "ทุกอย่างในแพ็กโปร",
-      "โดเนทไม่จำกัด",
+      "รับโดเนทตรวจสลิปอัตโนมัติ ไม่จำกัด",
+      "ปรับสี ฟอนต์ และเสียงแจ้งเตือนเอง",
+      "ใส่ภาพ / GIF แจ้งเตือนเอง",
+      "อ่านข้อความเป็นเสียงภาษาไทย (TTS)",
+      "ไม่มีลายน้ำ",
+      "ตั้งยอดโดเนทขั้นต่ำได้",
       "เป้าหมายโดเนท + overlay เป้าหมาย",
       "ลีดเดอร์บอร์ดผู้โดเนทสูงสุด",
       "แชร์มีเดีย (คลิป YouTube ขึ้นจอ)",
@@ -181,10 +170,15 @@ export const THAI_BANKS: { value: string; label: string }[] = [
 
 export const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, elite: 2 };
 
-/** Max verified donations a streamer can RECEIVE per calendar month, by plan. */
+/**
+ * Max verified donations a streamer can RECEIVE per calendar month, by plan.
+ * Both tiers are unlimited — verification cost is funded elsewhere (e.g. the
+ * donor-side platform tip), not by capping free streamers. Kept as a knob so a
+ * soft cap can be reintroduced for abuse protection without code changes.
+ */
 export const PLAN_DONATION_LIMIT: Record<Plan, number> = {
-  free: 20,
-  pro: 120,
+  free: Infinity,
+  pro: Infinity,
   elite: Infinity,
 };
 
@@ -211,9 +205,6 @@ export type SubPackage = {
 };
 
 export const PACKAGES: SubPackage[] = [
-  { id: "pro-30", tier: "pro", days: 30, price: 99, label: "30 วัน" },
-  { id: "pro-90", tier: "pro", days: 90, price: 267, label: "90 วัน", note: "ประหยัด 10%" },
-  { id: "pro-365", tier: "pro", days: 365, price: 990, label: "365 วัน", note: "ประหยัด 17%" },
   { id: "elite-30", tier: "elite", days: 30, price: 199, label: "30 วัน" },
   { id: "elite-90", tier: "elite", days: 90, price: 537, label: "90 วัน", note: "ประหยัด 10%" },
   {
