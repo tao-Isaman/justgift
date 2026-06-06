@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { broadcastToOverlay } from "@/lib/supabase/broadcast";
 
 async function assertAdmin() {
   const supabase = await createClient();
@@ -57,6 +58,51 @@ export async function adminGrantPackage(input: {
   revalidatePath("/admin/users");
   revalidatePath("/admin");
   return { ok: true };
+}
+
+/** Fire a test donation alert to a streamer's overlay (no slip verification). */
+export async function adminSendTestAlert(
+  profileId: string
+): Promise<{ error?: string; ok?: boolean }> {
+  if (!(await assertAdmin())) return { error: "ไม่มีสิทธิ์เข้าถึง" };
+
+  const svc = createAdminClient();
+  const { data: profile } = await svc
+    .from("profiles")
+    .select("overlay_token")
+    .eq("id", profileId)
+    .single();
+  if (!profile) return { error: "ไม่พบโปรไฟล์" };
+
+  const { data: settings } = await svc
+    .from("alert_settings")
+    .select("*")
+    .eq("profile_id", profileId)
+    .single();
+
+  try {
+    await broadcastToOverlay(profile.overlay_token, {
+      id: crypto.randomUUID(),
+      donorName: "แอดมินทดสอบ",
+      amount: 199,
+      message: "🎉 การแจ้งเตือนทดสอบจากแอดมิน (ไม่ตรวจสลิป)",
+      accentColor: settings?.accent_color,
+      textColor: settings?.text_color,
+      imageUrl: settings?.image_url,
+      durationMs: settings?.duration_ms,
+      ttsEnabled: settings?.tts_enabled,
+      ttsVoice: settings?.tts_voice,
+      ttsRead: settings?.tts_read,
+      animation: settings?.animation,
+      soundUrl: settings?.sound_url,
+      test: true,
+    });
+    return { ok: true };
+  } catch (e) {
+    return {
+      error: e instanceof Error ? e.message : "ส่งการแจ้งเตือนไม่สำเร็จ",
+    };
+  }
 }
 
 /** Revoke a streamer back to the free plan. */

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GrantPackageDialog } from "@/components/admin/grant-package-dialog";
+import { AdminTestAlertButton } from "@/components/admin/test-alert-button";
 import type { Plan } from "@/lib/supabase/types";
 
 export const metadata = { title: "ผู้ใช้ · แอดมิน" };
@@ -87,11 +88,17 @@ export default async function AdminUsersPage({
                           : ""}
                       </p>
                     </div>
-                    <GrantPackageDialog
-                      profileId={u.id}
-                      username={u.username ?? ""}
-                      currentPlan={plan}
-                    />
+                    <div className="flex items-center gap-2">
+                      <AdminTestAlertButton
+                        profileId={u.id}
+                        username={u.username ?? ""}
+                      />
+                      <GrantPackageDialog
+                        profileId={u.id}
+                        username={u.username ?? ""}
+                        currentPlan={plan}
+                      />
+                    </div>
                   </div>
                 );
               })}
