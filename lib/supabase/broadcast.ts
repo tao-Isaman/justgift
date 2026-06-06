@@ -1,5 +1,8 @@
 import "server-only";
-import type { OverlayAlertPayload } from "@/lib/supabase/types";
+import type {
+  CountdownState,
+  OverlayAlertPayload,
+} from "@/lib/supabase/types";
 
 /**
  * Send an event to an overlay's realtime Broadcast channel via the Supabase
@@ -43,4 +46,9 @@ export async function broadcastToOverlay(
 /** Tell the overlay to skip the currently-playing media. */
 export async function broadcastSkip(token: string) {
   await send(token, "skip", {});
+}
+
+/** Push the latest countdown state to the countdown overlay. */
+export async function broadcastCountdown(token: string, state: CountdownState) {
+  await send(token, "countdown", state as unknown as Record<string, unknown>);
 }

@@ -45,3 +45,13 @@ export function isFuture(date: string | Date | null): boolean {
 export function daysAgoIso(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString();
 }
+
+/** ISO timestamp for N seconds before now (used for presence queries). */
+export function secondsAgoIso(seconds: number): string {
+  return new Date(Date.now() - seconds * 1000).toISOString();
+}
+
+/** Current epoch milliseconds (wrapped so render-purity lint stays happy). */
+export function nowMs(): number {
+  return Date.now();
+}

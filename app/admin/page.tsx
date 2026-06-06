@@ -1,6 +1,14 @@
-import { Banknote, CreditCard, Crown, Gift, Users, UserCheck } from "lucide-react";
+import {
+  Banknote,
+  CreditCard,
+  Crown,
+  Gift,
+  Radio,
+  Users,
+  UserCheck,
+} from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { formatNumber, formatTHB, timeAgo } from "@/lib/format";
+import { formatNumber, formatTHB, secondsAgoIso, timeAgo } from "@/lib/format";
 import {
   Card,
   CardContent,
@@ -69,6 +77,15 @@ export default async function AdminOverviewPage() {
     .in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
   const nameOf = new Map((profs ?? []).map((p) => [p.id, p.username ?? "—"]));
 
+  // Streamers whose overlay pinged within the last 90s = live now.
+  const { data: live } = await svc
+    .from("profiles")
+    .select("username, display_name, last_overlay_at")
+    .gt("last_overlay_at", secondsAgoIso(90))
+    .order("last_overlay_at", { ascending: false })
+    .limit(50);
+  const liveRows = live ?? [];
+
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
@@ -116,6 +133,37 @@ export default async function AdminOverviewPage() {
           sub={`เดือนนี้ ${formatTHB(Number(o.month_membership_revenue))}`}
         />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Radio className="size-4 text-emerald-400" />
+            กำลังไลฟ์ ({liveRows.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {liveRows.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">
+              ยังไม่มีใครเปิด overlay อยู่
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {liveRows.map((s) => (
+                <span
+                  key={s.username}
+                  className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm"
+                >
+                  <span className="size-2 animate-pulse rounded-full bg-emerald-400" />
+                  @{s.username ?? "—"}
+                  <span className="text-xs text-muted-foreground">
+                    {timeAgo(s.last_overlay_at!)}
+                  </span>
+                </span>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

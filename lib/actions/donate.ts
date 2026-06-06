@@ -1,7 +1,10 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { broadcastToOverlay } from "@/lib/supabase/broadcast";
+import {
+  broadcastToOverlay,
+  broadcastCountdown,
+} from "@/lib/supabase/broadcast";
 import { verifySlip, parseTransTimestamp } from "@/lib/slip-provider";
 import { MAX_SLIP_AGE_MS, receiverMatches } from "@/lib/slip-verify";
 import { donationSchema } from "@/lib/validations";
@@ -178,6 +181,35 @@ export async function submitDonation(
     });
   } catch {
     // swallow — the streamer can replay from history later
+  }
+
+  // 7) Countdown: add time when the streamer's timer is running (best-effort).
+  try {
+    const { data: cd } = await admin
+      .from("countdowns")
+      .select("enabled, running, ends_at, baht_per_unit, minutes_per_unit")
+      .eq("profile_id", profile.id)
+      .maybeSingle();
+    if (cd?.enabled && cd.running && cd.ends_at) {
+      const perBaht =
+        (Number(cd.minutes_per_unit) * 60) / Math.max(1, Number(cd.baht_per_unit));
+      const addMs = Math.round(verifiedAmount * perBaht) * 1000;
+      if (addMs > 0) {
+        const base = Math.max(Date.now(), new Date(cd.ends_at).getTime());
+        const endsAt = new Date(base + addMs).toISOString();
+        await admin
+          .from("countdowns")
+          .update({ ends_at: endsAt, updated_at: new Date().toISOString() })
+          .eq("profile_id", profile.id);
+        await broadcastCountdown(profile.overlay_token, {
+          running: true,
+          endsAt,
+          remainingMs: 0,
+        });
+      }
+    }
+  } catch {
+    // swallow — donation already recorded
   }
 
   return { ok: true, amount: verifiedAmount };

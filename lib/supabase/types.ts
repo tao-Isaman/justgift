@@ -43,6 +43,7 @@ export type Database = {
           show_leaderboard: boolean;
           created_at: string;
           updated_at: string;
+          last_overlay_at: string | null;
         };
         Insert: {
           id: string;
@@ -67,6 +68,7 @@ export type Database = {
           show_leaderboard?: boolean;
           created_at?: string;
           updated_at?: string;
+          last_overlay_at?: string | null;
         };
         Update: {
           id?: string;
@@ -91,6 +93,7 @@ export type Database = {
           show_leaderboard?: boolean;
           created_at?: string;
           updated_at?: string;
+          last_overlay_at?: string | null;
         };
         Relationships: [];
       };
@@ -232,6 +235,38 @@ export type Database = {
           status?: DonationStatus;
           shown_at?: string | null;
           reject_reason?: string | null;
+        };
+        Relationships: [];
+      };
+      countdowns: {
+        Row: {
+          profile_id: string;
+          enabled: boolean;
+          running: boolean;
+          ends_at: string | null;
+          remaining_ms: number;
+          baht_per_unit: number;
+          minutes_per_unit: number;
+          updated_at: string;
+        };
+        Insert: {
+          profile_id: string;
+          enabled?: boolean;
+          running?: boolean;
+          ends_at?: string | null;
+          remaining_ms?: number;
+          baht_per_unit?: number;
+          minutes_per_unit?: number;
+          updated_at?: string;
+        };
+        Update: {
+          enabled?: boolean;
+          running?: boolean;
+          ends_at?: string | null;
+          remaining_ms?: number;
+          baht_per_unit?: number;
+          minutes_per_unit?: number;
+          updated_at?: string;
         };
         Relationships: [];
       };
@@ -582,6 +617,12 @@ export type MyMembership =
   Database["public"]["Functions"]["my_memberships"]["Returns"][number];
 
 /** Payload broadcast to the OBS overlay channel `overlay:<token>`. */
+export type CountdownState = {
+  running: boolean;
+  endsAt: string | null;
+  remainingMs: number;
+};
+
 export type OverlayAlertPayload = {
   id: string;
   donorName: string;

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { createClient } from "@/lib/supabase/client";
 import { AlertCard } from "@/components/alert-card";
 import { Confetti } from "@/components/confetti";
+import { OverlayHeartbeat } from "@/components/overlay-heartbeat";
 import {
   ALERT_VARIANTS,
   buildTtsText,
@@ -150,6 +151,7 @@ export function OverlayClient({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
+      <OverlayHeartbeat token={token} />
       {current && big ? (
         <Confetti key={current.id} colors={[accent, "#ffffff", "#fbbf24"]} />
       ) : null}

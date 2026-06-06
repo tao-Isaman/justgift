@@ -7,6 +7,7 @@ import {
   CreditCard,
   LayoutDashboard,
   Settings,
+  Timer,
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils";
 const ITEMS = [
   { href: "/dashboard", label: "ภาพรวม", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/alerts", label: "การแจ้งเตือน", icon: Bell },
+  { href: "/dashboard/countdown", label: "นับถอยหลัง", icon: Timer },
   { href: "/dashboard/members", label: "สมาชิก", icon: Users },
   { href: "/dashboard/settings", label: "ตั้งค่า", icon: Settings },
   { href: "/dashboard/billing", label: "การเรียกเก็บเงิน", icon: CreditCard },
