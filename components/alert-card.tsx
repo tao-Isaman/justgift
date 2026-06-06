@@ -12,11 +12,34 @@ export type AlertCardProps = {
   watermark?: boolean;
   fontFamily?: string;
   className?: string;
+  /** "lg" = bigger box + text for the on-stream overlay (easier to read). */
+  size?: "default" | "lg";
 };
+
+const SIZES = {
+  default: {
+    box: "w-[420px] p-5",
+    gap: "gap-4",
+    icon: "size-14",
+    glyph: "size-7",
+    name: "text-lg",
+    amount: "text-3xl",
+    message: "mt-3 text-sm",
+  },
+  lg: {
+    box: "w-[640px] p-8",
+    gap: "gap-6",
+    icon: "size-24",
+    glyph: "size-12",
+    name: "text-3xl",
+    amount: "text-6xl",
+    message: "mt-5 text-2xl",
+  },
+} as const;
 
 /**
  * The donation alert visual. Pure/presentational — reused by the marketing
- * hero, the dashboard preview/test, and the live OBS overlay.
+ * hero, the dashboard preview/test, and the live OBS overlay (size="lg").
  */
 export function AlertCard({
   donorName,
@@ -28,11 +51,14 @@ export function AlertCard({
   watermark = false,
   fontFamily,
   className,
+  size = "default",
 }: AlertCardProps) {
+  const s = SIZES[size];
   return (
     <div
       className={cn(
-        "relative w-[420px] max-w-full overflow-hidden rounded-lg bg-card/95 p-5 backdrop-blur-sm clip-corner",
+        "relative max-w-full overflow-hidden rounded-lg bg-card/95 backdrop-blur-sm clip-corner",
+        s.box,
         className
       )}
       style={{
@@ -43,25 +69,25 @@ export function AlertCard({
         className="absolute inset-x-0 top-0 h-1"
         style={{ backgroundColor: accentColor }}
       />
-      <div className="flex items-center gap-4">
+      <div className={cn("flex items-center", s.gap)}>
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt=""
-            className="size-14 shrink-0 rounded-md object-cover"
+            className={cn("shrink-0 rounded-md object-cover", s.icon)}
           />
         ) : (
           <span
-            className="grid size-14 shrink-0 place-items-center rounded-md"
+            className={cn("grid shrink-0 place-items-center rounded-md", s.icon)}
             style={{ backgroundColor: `${accentColor}22`, color: accentColor }}
           >
-            <Gift className="size-7" />
+            <Gift className={s.glyph} />
           </span>
         )}
         <div className="min-w-0">
           <p
-            className="font-heading text-lg leading-tight"
+            className={cn("font-heading leading-tight", s.name)}
             style={{ color: textColor, fontFamily }}
           >
             <span className="font-bold" style={{ color: accentColor }}>
@@ -70,7 +96,7 @@ export function AlertCard({
             โดเนท
           </p>
           <p
-            className="font-display text-3xl font-extrabold tabular-nums"
+            className={cn("font-display font-extrabold tabular-nums", s.amount)}
             style={{ color: accentColor }}
           >
             {formatTHB(amount)}
@@ -79,7 +105,7 @@ export function AlertCard({
       </div>
       {message ? (
         <p
-          className="mt-3 line-clamp-3 text-sm leading-relaxed"
+          className={cn("line-clamp-3 leading-relaxed", s.message)}
           style={{ color: textColor, fontFamily }}
         >
           {message}

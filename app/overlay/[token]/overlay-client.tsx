@@ -161,6 +161,7 @@ export function OverlayClient({
                 transition={variant.transition}
               >
                 <AlertCard
+                  size="lg"
                   donorName={current.donorName}
                   amount={current.amount}
                   message={current.message}
