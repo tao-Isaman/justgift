@@ -126,11 +126,10 @@ function chunkText(text: string, max = 180): string[] {
   return out;
 }
 
-function googleTtsUrl(text: string, lang: string): string {
+function ttsUrl(text: string, lang: string): string {
   const tl = (lang || "th").slice(0, 2);
-  return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${tl}&q=${encodeURIComponent(
-    text
-  )}`;
+  // Same-origin proxy (see app/api/tts) — reliable inside OBS + browsers.
+  return `/api/tts?lang=${tl}&text=${encodeURIComponent(text)}`;
 }
 
 function playOnce(url: string, vol: number, rate: number): Promise<void> {
@@ -183,7 +182,7 @@ export async function speakDonation(
   if (vol <= 0 || !text || typeof window === "undefined") return;
   try {
     for (const chunk of chunkText(text)) {
-      await playOnce(googleTtsUrl(chunk, lang), vol, rate);
+      await playOnce(ttsUrl(chunk, lang), vol, rate);
     }
   } catch {
     speakWebSpeech(text, lang, rate, vol);

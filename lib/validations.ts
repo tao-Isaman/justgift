@@ -28,14 +28,10 @@ export const onboardingSchema = z
 
 export type OnboardingValues = z.infer<typeof onboardingSchema>;
 
-/** Donor-facing donation form. */
+/** Donor-facing donation form. Amount comes from the verified slip, not input. */
 export const donationSchema = z.object({
   donorName: z.string().trim().min(1, "กรอกชื่อ").max(40),
   message: z.string().trim().max(200, "ไม่เกิน 200 ตัวอักษร").optional(),
-  amount: z.coerce
-    .number()
-    .positive("กรอกจำนวนเงิน")
-    .max(1_000_000, "จำนวนเงินมากเกินไป"),
 });
 
 export type DonationValues = z.infer<typeof donationSchema>;

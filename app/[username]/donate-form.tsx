@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -39,18 +39,10 @@ import { submitDonation } from "@/lib/actions/donate";
 import { parseGifUrl } from "@/lib/media";
 import { THAI_BANKS } from "@/lib/constants";
 import { formatTHB } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   donorName: z.string().trim().min(1, "กรอกชื่อ").max(40),
   message: z.string().trim().max(200, "ไม่เกิน 200 ตัวอักษร").optional(),
-  amount: z
-    .string()
-    .min(1, "กรอกจำนวนเงิน")
-    .refine((v) => {
-      const n = Number(v);
-      return Number.isFinite(n) && n > 0 && n <= 1_000_000;
-    }, "กรอกจำนวนเงินให้ถูกต้อง"),
   mediaUrl: z.string().trim().optional(),
 });
 
@@ -85,9 +77,8 @@ export function DonateForm({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { donorName: "", message: "", amount: "", mediaUrl: "" },
+    defaultValues: { donorName: "", message: "", mediaUrl: "" },
   });
-  const amountValue = useWatch({ control: form.control, name: "amount" });
 
   const bankLabel =
     THAI_BANKS.find((b) => b.value === bankName)?.label ?? bankName;
@@ -134,7 +125,6 @@ export function DonateForm({
         username,
         donorName: values.donorName,
         message: values.message,
-        amount: Number(values.amount),
         payload,
         slipImagePath,
         mediaUrl: mediaEnabled ? values.mediaUrl : undefined,
@@ -146,7 +136,7 @@ export function DonateForm({
       }
 
       setSuccess({
-        amount: res.amount ?? Number(values.amount),
+        amount: res.amount ?? 0,
         name: values.donorName,
         message: values.message,
       });
@@ -215,6 +205,19 @@ export function DonateForm({
               สตรีมเมอร์ยังไม่ได้เพิ่มช่องทางรับเงิน
             </p>
           ) : null}
+          {suggestedAmounts.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="text-xs text-muted-foreground">ยอดแนะนำ:</span>
+              {suggestedAmounts.map((n) => (
+                <span
+                  key={n}
+                  className="rounded-full border border-border/60 px-2.5 py-0.5 text-xs text-muted-foreground"
+                >
+                  {formatTHB(n)}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <Form {...form}>
@@ -222,65 +225,22 @@ export function DonateForm({
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               2 · ข้อมูลแจ้งเตือน
             </p>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="donorName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ชื่อของคุณ</FormLabel>
-                    <FormControl>
-                      <Input placeholder="แสดงบนสตรีม" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>จำนวนเงิน (฿)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        inputMode="decimal"
-                        min={1}
-                        step="1"
-                        placeholder="100"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {suggestedAmounts.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {suggestedAmounts.map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() =>
-                      form.setValue("amount", String(n), {
-                        shouldValidate: true,
-                      })
-                    }
-                    className={cn(
-                      "rounded-full border px-3 py-1 text-sm font-medium transition-colors",
-                      amountValue === String(n)
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/60 text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                    )}
-                  >
-                    {formatTHB(n)}
-                  </button>
-                ))}
-              </div>
-            ) : null}
+            <p className="-mt-2 text-xs text-muted-foreground">
+              ยอดเงินจะดึงจากสลิปของคุณอัตโนมัติ ไม่ต้องกรอกเอง
+            </p>
+            <FormField
+              control={form.control}
+              name="donorName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ชื่อของคุณ</FormLabel>
+                  <FormControl>
+                    <Input placeholder="แสดงบนสตรีม" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

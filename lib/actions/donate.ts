@@ -13,7 +13,6 @@ export type SubmitDonationInput = {
   username: string;
   donorName: string;
   message?: string;
-  amount: number;
   payload: string; // QR payload decoded client-side
   slipImagePath?: string;
   mediaUrl?: string;
@@ -27,7 +26,6 @@ export async function submitDonation(
   const parsed = donationSchema.safeParse({
     donorName: input.donorName,
     message: input.message,
-    amount: input.amount,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "ข้อมูลไม่ถูกต้อง" };
@@ -137,7 +135,7 @@ export async function submitDonation(
       profile_id: profile.id,
       donor_name: parsed.data.donorName,
       message: parsed.data.message ?? null,
-      amount: parsed.data.amount,
+      amount: verifiedAmount,
       verified_amount: verifiedAmount,
       status: "verified",
       slip_trans_ref: data.transRef ?? null,

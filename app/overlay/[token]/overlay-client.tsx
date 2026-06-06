@@ -150,46 +150,46 @@ export function OverlayClient({
         className={cn("absolute", positionClass(defaults.position))}
         style={{ perspective: 1000 }}
       >
-        <AnimatePresence mode="wait">
-          {current && (
-            <motion.div
-              key={current.id}
-              initial={variant.initial}
-              animate={variant.animate}
-              exit={variant.exit}
-              transition={variant.transition}
-            >
-              <AlertCard
-                donorName={current.donorName}
-                amount={current.amount}
-                message={current.message}
-                accentColor={accent}
-                textColor={current.textColor ?? defaults.textColor}
-                imageUrl={current.imageUrl ?? defaults.imageUrl}
-                watermark={defaults.watermark}
-                fontFamily={defaults.fontFamily}
-                className={big ? "scale-105 animate-pulse-glow" : undefined}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        <div className="flex flex-col items-center gap-3">
+          <AnimatePresence mode="wait">
+            {current && (
+              <motion.div
+                key={current.id}
+                initial={variant.initial}
+                animate={variant.animate}
+                exit={variant.exit}
+                transition={variant.transition}
+              >
+                <AlertCard
+                  donorName={current.donorName}
+                  amount={current.amount}
+                  message={current.message}
+                  accentColor={accent}
+                  textColor={current.textColor ?? defaults.textColor}
+                  imageUrl={current.imageUrl ?? defaults.imageUrl}
+                  watermark={defaults.watermark}
+                  fontFamily={defaults.fontFamily}
+                  className={big ? "scale-105 animate-pulse-glow" : undefined}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      {/* Donor GIF phase */}
-      {media ? (
-        <div className="fixed inset-0 grid place-items-center p-10">
-          <motion.img
-            key={media.key}
-            src={media.url}
-            alt=""
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="max-h-[70vh] max-w-[70vw] rounded-xl object-contain"
-            style={{ filter: `drop-shadow(0 0 40px ${accent}aa)` }}
-          />
+          {/* Donor GIF — smaller, directly below the alert (doesn't block it). */}
+          {media ? (
+            <motion.img
+              key={media.key}
+              src={media.url}
+              alt=""
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="max-h-56 w-auto max-w-sm rounded-xl object-contain"
+              style={{ filter: `drop-shadow(0 0 24px ${accent}aa)` }}
+            />
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
