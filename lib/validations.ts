@@ -60,6 +60,7 @@ export const alertSettingsSchema = z.object({
   imageUrl: httpUrlOrEmpty,
   ttsEnabled: z.boolean(),
   ttsVoice: z.string().max(20),
+  ttsRead: z.enum(["all", "message"]),
   ttsRate: z.number().min(0.5).max(2),
   ttsVolume: z.number().min(0).max(1),
   bigThreshold: z.number().min(0).max(1_000_000),

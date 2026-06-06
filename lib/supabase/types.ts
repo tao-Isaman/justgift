@@ -107,6 +107,7 @@ export type Database = {
           font: string;
           tts_enabled: boolean;
           tts_voice: string | null;
+          tts_read: string;
           position: AlertPosition;
           sound_volume: number;
           tts_rate: number;
@@ -136,6 +137,7 @@ export type Database = {
           font?: string;
           tts_enabled?: boolean;
           tts_voice?: string | null;
+          tts_read?: string;
           position?: AlertPosition;
           sound_volume?: number;
           tts_rate?: number;
@@ -165,6 +167,7 @@ export type Database = {
           font?: string;
           tts_enabled?: boolean;
           tts_voice?: string | null;
+          tts_read?: string;
           position?: AlertPosition;
           sound_volume?: number;
           tts_rate?: number;
@@ -590,6 +593,7 @@ export type OverlayAlertPayload = {
   durationMs?: number;
   ttsEnabled?: boolean;
   ttsVoice?: string | null;
+  ttsRead?: string;
   animation?: AlertAnimation;
   position?: AlertPosition;
   soundUrl?: string | null;

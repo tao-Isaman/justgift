@@ -64,6 +64,11 @@ const GOAL_PERIODS: { value: string; label: string }[] = [
   { value: "90", label: "90 วันล่าสุด" },
 ];
 
+const TTS_READ_MODES: { value: string; label: string }[] = [
+  { value: "all", label: "อ่านทั้งหมด (ชื่อ + ยอด + ข้อความ)" },
+  { value: "message", label: "อ่านเฉพาะข้อความ" },
+];
+
 const SAMPLE = {
   name: "ผู้ทดสอบ",
   amount: 250,
@@ -107,6 +112,7 @@ export function AlertSettingsForm({
       imageUrl: settings?.image_url ?? "",
       ttsEnabled: settings?.tts_enabled ?? false,
       ttsVoice: settings?.tts_voice ?? "th-TH",
+      ttsRead: (settings?.tts_read as "all" | "message") ?? "all",
       ttsRate: Number(settings?.tts_rate ?? 1),
       ttsVolume: Number(settings?.tts_volume ?? 1),
       bigThreshold: Number(settings?.big_threshold ?? 500),
@@ -145,12 +151,11 @@ export function AlertSettingsForm({
     setReplay((r) => r + 1);
     playAlertSound(v.soundUrl || null, v.soundVolume, false);
     if (v.ttsEnabled) {
-      speakDonation(
-        buildTtsText(SAMPLE.name, SAMPLE.amount, SAMPLE.message),
-        v.ttsVoice || "th-TH",
-        v.ttsRate,
-        v.ttsVolume
-      );
+      const text =
+        v.ttsRead === "message"
+          ? SAMPLE.message
+          : buildTtsText(SAMPLE.name, SAMPLE.amount, SAMPLE.message);
+      speakDonation(text, v.ttsVoice || "th-TH", v.ttsRate, v.ttsVolume);
     }
   }
 
@@ -359,6 +364,33 @@ export function AlertSettingsForm({
                   onCheckedChange={(c) => field.onChange(c)}
                   disabled={!pro}
                 />
+              )}
+            />
+          </Row>
+          <Row label="อ่านอะไรบ้าง">
+            <Controller
+              control={control}
+              name="ttsRead"
+              render={({ field }) => (
+                <Select
+                  items={TTS_READ_MODES}
+                  value={field.value}
+                  onValueChange={(val) =>
+                    field.onChange((val as "all" | "message") ?? "all")
+                  }
+                  disabled={!pro}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TTS_READ_MODES.map((t) => (
+                      <SelectItem key={t.value} value={t.value}>
+                        {t.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             />
           </Row>
@@ -624,24 +656,9 @@ export function AlertSettingsForm({
               )}
             />
           </Row>
-          <Row label={`แสดง GIF สูงสุด — ${v.mediaMaxSeconds} วินาที`}>
-            <Controller
-              control={control}
-              name="mediaMaxSeconds"
-              render={({ field }) => (
-                <Slider
-                  min={5}
-                  max={120}
-                  step={5}
-                  value={field.value}
-                  onValueChange={(val) =>
-                    field.onChange(Array.isArray(val) ? val[0] : val)
-                  }
-                  disabled={!elite}
-                />
-              )}
-            />
-          </Row>
+          <p className="text-xs text-muted-foreground">
+            GIF จะเด้งขึ้นจอพร้อมกับการแจ้งเตือนและแสดงตามเวลาของการแจ้งเตือน
+          </p>
         </Section>
 
         {/* Amount-tier variants — Elite */}

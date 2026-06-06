@@ -172,6 +172,7 @@ export async function submitDonation(
       durationMs: settings?.duration_ms,
       ttsEnabled: settings?.tts_enabled,
       ttsVoice: settings?.tts_voice,
+      ttsRead: settings?.tts_read,
       animation,
       soundUrl: settings?.sound_url,
       mediaUrl: gifUrl,

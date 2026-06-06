@@ -27,6 +27,7 @@ export type OverlayDefaults = {
   durationMs: number;
   ttsEnabled: boolean;
   ttsVoice: string | null;
+  ttsRead: string;
   animation: AlertAnimation;
   position: AlertPosition;
   soundVolume: number;
@@ -50,17 +51,16 @@ export function OverlayClient({
 
   const queueRef = useRef<OverlayAlertPayload[]>([]);
   const showingRef = useRef(false);
-  const mediaActiveRef = useRef(false);
-  const mediaTimerRef = useRef<number | null>(null);
+  const timerRef = useRef<number | null>(null);
   const playNextRef = useRef<() => void>(() => {});
   const endRef = useRef<() => void>(() => {});
 
   const end = useCallback(() => {
-    if (mediaTimerRef.current) {
-      window.clearTimeout(mediaTimerRef.current);
-      mediaTimerRef.current = null;
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
-    mediaActiveRef.current = false;
+    setCurrent(null);
     setMedia(null);
     showingRef.current = false;
     window.setTimeout(() => playNextRef.current(), 500);
@@ -72,8 +72,9 @@ export function OverlayClient({
     if (!next) return;
 
     showingRef.current = true;
-    setMedia(null);
+    // Show the alert and the donor GIF at the same time.
     setCurrent(next);
+    setMedia(next.mediaUrl ? { url: next.mediaUrl, key: next.id } : null);
 
     const big = next.amount >= defaults.bigThreshold && defaults.bigEffect;
     const duration = Math.round(
@@ -84,28 +85,22 @@ export function OverlayClient({
 
     const ttsOn = next.ttsEnabled ?? defaults.ttsEnabled;
     if (ttsOn) {
-      speakDonation(
-        buildTtsText(next.donorName, next.amount, next.message),
-        next.ttsVoice ?? defaults.ttsVoice ?? "th-TH",
-        defaults.ttsRate,
-        defaults.ttsVolume
-      );
+      const readMode = next.ttsRead ?? defaults.ttsRead;
+      const text =
+        readMode === "message"
+          ? (next.message ?? "").trim()
+          : buildTtsText(next.donorName, next.amount, next.message);
+      if (text) {
+        speakDonation(
+          text,
+          next.ttsVoice ?? defaults.ttsVoice ?? "th-TH",
+          defaults.ttsRate,
+          defaults.ttsVolume
+        );
+      }
     }
 
-    window.setTimeout(() => {
-      setCurrent(null);
-      if (next.mediaUrl) {
-        const secs = Math.min(120, Math.max(5, Number(next.mediaSeconds ?? 30)));
-        mediaActiveRef.current = true;
-        setMedia({ url: next.mediaUrl, key: next.id });
-        mediaTimerRef.current = window.setTimeout(
-          () => endRef.current(),
-          secs * 1000
-        );
-      } else {
-        endRef.current();
-      }
-    }, duration);
+    timerRef.current = window.setTimeout(() => endRef.current(), duration);
   }, [defaults]);
 
   useEffect(() => {
@@ -130,7 +125,7 @@ export function OverlayClient({
         playNext();
       })
       .on("broadcast", { event: "skip" }, () => {
-        if (mediaActiveRef.current) endRef.current();
+        if (showingRef.current) endRef.current();
       })
       .subscribe();
 

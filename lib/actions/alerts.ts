@@ -36,6 +36,7 @@ export async function updateAlertSettings(
       image_url: v.imageUrl || null,
       tts_enabled: v.ttsEnabled,
       tts_voice: v.ttsVoice || null,
+      tts_read: v.ttsRead,
       tts_rate: v.ttsRate,
       tts_volume: v.ttsVolume,
       big_threshold: v.bigThreshold,
