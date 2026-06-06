@@ -41,7 +41,12 @@ export function SettingsForm({
   const [saving, startSave] = useTransition();
   const socials = asSocials(profile.socials);
 
-  const { control, handleSubmit } = useForm<ProfileSettingsValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<ProfileSettingsValues>({
     resolver: zodResolver(profileSettingsSchema),
     defaultValues: {
       displayName: profile.display_name ?? "",
@@ -71,7 +76,11 @@ export function SettingsForm({
     startSave(async () => {
       const res = await updateProfile(values);
       if (res?.error) toast.error(res.error);
-      else toast.success("บันทึกโปรไฟล์แล้ว");
+      else {
+        toast.success("บันทึกโปรไฟล์แล้ว");
+        // Mark the form clean again so the unsaved-changes bar hides.
+        reset(values);
+      }
     });
   }
 
@@ -297,15 +306,30 @@ export function SettingsForm({
         </div>
       </Section>
 
-      <div className="flex justify-end">
-        <Button type="submit" className="glow-red-sm" disabled={saving}>
-          {saving ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Save className="size-4" />
-          )}
-          บันทึก
-        </Button>
+      {/* Sticky save bar — appears whenever there are unsaved changes so the
+          Save action is always reachable in this long form. */}
+      <div
+        className={cn(
+          "sticky bottom-4 z-20 transition-all",
+          isDirty
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-2 opacity-0"
+        )}
+      >
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-primary/40 bg-card/95 px-4 py-3 shadow-lg backdrop-blur glow-red-sm">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="inline-block size-2 animate-pulse rounded-full bg-primary" />
+            มีการแก้ไขที่ยังไม่ได้บันทึก
+          </span>
+          <Button type="submit" className="glow-red-sm" disabled={saving}>
+            {saving ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            บันทึก
+          </Button>
+        </div>
       </div>
     </form>
   );
