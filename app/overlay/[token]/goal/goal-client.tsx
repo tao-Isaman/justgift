@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GoalBar } from "@/components/goal-bar";
+import { OverlayHeartbeat } from "@/components/overlay-heartbeat";
 import type { OverlayAlertPayload } from "@/lib/supabase/types";
 
 export function GoalOverlayClient({
@@ -38,13 +39,14 @@ export function GoalOverlayClient({
   }, [token]);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 p-6">
+    <div className="fixed inset-0 flex items-center justify-center p-10">
+      <OverlayHeartbeat token={token} />
       <GoalBar
         title={goalTitle}
         total={total}
         goalAmount={goalAmount}
         accentColor={accentColor}
-        className="mx-auto max-w-3xl"
+        className="w-full max-w-4xl"
       />
     </div>
   );

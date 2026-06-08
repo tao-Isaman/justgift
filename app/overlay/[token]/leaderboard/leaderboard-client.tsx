@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { LeaderboardCard, type LeaderboardEntry } from "@/components/leaderboard-card";
+import { OverlayHeartbeat } from "@/components/overlay-heartbeat";
 import type { OverlayAlertPayload } from "@/lib/supabase/types";
 
 export function LeaderboardOverlayClient({
@@ -48,8 +49,11 @@ export function LeaderboardOverlayClient({
   }, [token]);
 
   return (
-    <div className="fixed top-6 left-6 w-72">
-      <LeaderboardCard entries={entries} accentColor={accentColor} />
+    <div className="fixed inset-0 flex items-center justify-center p-10">
+      <OverlayHeartbeat token={token} />
+      <div className="w-full max-w-md">
+        <LeaderboardCard entries={entries} accentColor={accentColor} />
+      </div>
     </div>
   );
 }
