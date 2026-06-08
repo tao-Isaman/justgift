@@ -42,6 +42,7 @@ export function GoalOverlayClient({
     <div className="fixed inset-0 flex items-center justify-center p-10">
       <OverlayHeartbeat token={token} />
       <GoalBar
+        size="lg"
         title={goalTitle}
         total={total}
         goalAmount={goalAmount}
